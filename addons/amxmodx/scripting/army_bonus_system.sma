@@ -405,7 +405,7 @@ public EventDeath(){
 			UserData[iVictim][HeadStr]=0
 		}
 		
-		players[iVictim] = NONE	//�������� ������������ ����� ������� � �����
+		players[iVictim] = NONE	//Îáíóëÿåì âîçìèîæíîñòè ñóïåð ãðàíàòû è äèãëà
 		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16)	///Setting invis to 0
 		UserData[iKiller][Streak]++
 		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
@@ -569,7 +569,7 @@ public hookSay(id){
 	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
 	}else{
 	if(get_pcvar_num(gChatTop) == 1)
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ранг : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
 	}
 		switch(get_pcvar_num(gAdminGMsg))
 		{
@@ -595,7 +595,7 @@ public hookSay(id){
 	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
 	}else
 	if(get_pcvar_num(gChatTop) == 1){
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ранг : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
 	}
 		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
 		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
@@ -845,10 +845,10 @@ public Info(){
 			
 			new name[33];get_user_name(id,name,32)
 			set_dhudmessage(Red, Green, Blue, 0.01, 0.16, 0, 1.0, 1.0, _, _, _);
-			show_dhudmessage(id,"Ник : %s^n%s",name, buffer);
+			show_dhudmessage(id,"ÐÐ¸Ðº : %s^n%s",name, buffer);
 				if(get_pcvar_num(ar_kill_counter)==1){	
 				set_dhudmessage(Red, Green, Blue, 0.01, 0.85, 0, 1.0, 1.0)
-				show_dhudmessage(id, "Убито : %d ^nВ голову : %d",UserData[id][Streak],UserData[id][HeadStr])	
+				show_dhudmessage(id, "Ð£Ð±Ð¸ÑÐ¾ : %d ^nÐ Ð³Ð¾Ð»Ð¾Ð²Ñ : %d",UserData[id][Streak],UserData[id][HeadStr])	
 				}
 			set_dhudmessage(Red, Green, Blue,-1.0,0.90, 0, 1.0, 1.0)
 			show_dhudmessage(id,"%L",LANG_PLAYER,"ANEW_INFO", UserData[id][g_Bonus])
@@ -961,9 +961,9 @@ if(round <= get_pcvar_num(ar_round_acc)){
 			menu_additem(menu,Text,"9")
 		}
 		
-		menu_setprop(menu, MPROP_BACKNAME, "Назад")
-		menu_setprop(menu, MPROP_NEXTNAME, "Далее")
-		menu_setprop(menu, MPROP_EXITNAME, "Выход")
+		menu_setprop(menu, MPROP_BACKNAME, "ÐÐ°Ð·Ð°Ð´")
+		menu_setprop(menu, MPROP_NEXTNAME, "ÐÐ°Ð»ÐµÐµ")
+		menu_setprop(menu, MPROP_EXITNAME, "ÐÑÑÐ¾Ð´")
 		menu_display(id,menu,0)
 		return PLUGIN_HANDLED
 		}
@@ -994,7 +994,7 @@ public func_anew_menu(id, menu, item)
 			give_item(id,"weapon_flashbang")
 			cs_set_user_bpammo( id, CSW_AWP, 40);
 			set_user_armor(id, 100);
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [AWP + Комплект]")
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AWP + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost1])
 			}
 			}
@@ -1005,7 +1005,7 @@ public func_anew_menu(id, menu, item)
 			give_item(id,"weapon_flashbang")
 			give_item(id,"weapon_flashbang")
 			cs_set_user_bpammo( id, CSW_AK47, 200);
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [AK-47 + Комплект]")
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AK-47 + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost2]);
 			}
 			}
@@ -1016,21 +1016,21 @@ public func_anew_menu(id, menu, item)
 			give_item(id,"weapon_flashbang")
 			give_item(id,"weapon_flashbang")
 			cs_set_user_bpammo( id, CSW_M4A1, 200);
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [M4A1+ Комплект]")
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [M4A1+ ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost3]);
 			}
 			}
 		case 4:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost4])){
 			cs_set_user_money(id,cs_get_user_money(id)+get_pcvar_num(Costs_cvar[menu_str1]),1)
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [%d$]",get_pcvar_num(Costs_cvar[menu_str1]))
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d$]",get_pcvar_num(Costs_cvar[menu_str1]))
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost4])
 			}
 			}
 		case 5:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost5])){
 			set_user_health(id,get_user_health(id) + get_pcvar_num(Costs_cvar[menu_str2]))
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [+%d HP]",get_pcvar_num(Costs_cvar[menu_str2]))
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [+%d HP]",get_pcvar_num(Costs_cvar[menu_str2]))
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost5]);
 			}
 			}
@@ -1039,7 +1039,7 @@ public func_anew_menu(id, menu, item)
 			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost6])){
 			UserData[id][gExp] += get_pcvar_num(Costs_cvar[menu_str3])
 			check_level(id)	
-			ColorChat(id,TEAM_COLOR,"Вы взяли  [%d Опыта Army Ranks]",get_pcvar_num(Costs_cvar[menu_str3]))
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Ranks]",get_pcvar_num(Costs_cvar[menu_str3]))
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost6]);
 			}
 			}
@@ -1056,7 +1056,7 @@ public func_anew_menu(id, menu, item)
 			if(!user_has_weapon(id,CSW_HEGRENADE))
 			fm_give_item(id,"weapon_hegrenade")
 			players[id] |= (1<<MEGA_GRENADE)
-			ColorChat(id,TEAM_COLOR,"Вы взяли MEGA GRENADE")
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE")
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost8])
 			}
 			}
@@ -1067,7 +1067,7 @@ public func_anew_menu(id, menu, item)
 			fm_give_item(id,"weapon_deagle")
 			cs_set_user_bpammo(id,CSW_DEAGLE,35)
 			players[id] |= (1<<MEGA_DEAGLE)
-			ColorChat(id,TEAM_COLOR,"Вы взяли MEGA DEAGLE")
+			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA DEAGLE")
 			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost9])
 			}
 			}
