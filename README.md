@@ -1,2 +1,3 @@
 # army-bonus-system
-Just my works, nothing personal
+
+Just my works, there's nothing to see.
