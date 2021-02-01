@@ -1,0 +1,177 @@
+﻿[ru]
+I_0		= Вступающий в ряды
+I_1		= Рядовой
+I_2		= Ефрейтор
+I_3		= Мл.Сержант
+I_4		= Сержант
+I_5		= Ст.Сержант
+I_6		= Старшина
+I_7		= Прапорщик
+I_8		= Ст.Прапорщик
+I_9		= Мл.Лейтенант
+I_10		= Лейтенант
+I_11		= Ст.Лейтенант
+I_12		= Капитан
+I_13		= Майор
+I_14		= Подполковник
+I_15		= Полковник
+I_16		= Генерал-Майор
+I_17		= Генерал-Лейтенант
+I_18		= Генерал-Полковник
+I_19		= Генерал-Армии
+I_20		= Командир дивизии
+I_21		= Минер
+I_22		= Сапер
+I_23		= Связист
+I_24		= Стрелок
+I_25		= Пулеметчик
+I_26		= Снайпер
+I_27		= Командующий армией
+I_28		= Командующий округом
+I_29		= Маршал РФ
+
+ZVANIE 		= Звание:
+PL_XP 		= Опыт : [%d/%d]
+PL_XP_STEXT	= Опыт : %d из %d
+BONUSES 	= Бонусы : [%d]
+PL_MAX		= Достигнут максимум развития.
+SEND_TEAM 	= Команде
+A_NAME 		= Ник :
+PLAYER 		= Игрок
+NEW_LEVEL 	= получил новое звание - 
+CONTR 		= Поздравим бойца!
+GW_TITLE 	= Какое оружие хотите Take?
+NAME_ARMY 	= Армия
+GROUP_VK	=   
+PRIFIX = ABS
+NEW_LVL_HUD = Игрок %s получил новое звание^n[%L]
+
+EMPTY_MSG	= Сообщение не может быть пустым.
+ENOUGH_ROUND = [ABS] Это меню можно открыть только после %d раунда.
+ENOUGH_PLAYERS = [ABS] Недостаточно игроков для начисления опыта (Нужно %d игроков)
+
+CT_WIN = Команда Контр-Террористов одержала победу!
+TT_WIN = Команда Террористов одержала победу!
+
+KNIFE_KILL = [ABS] Браво! Вы награждены %d бонусами.
+
+SUCC_BOMB_DEF = [ABS] За разминирование бомбы вы получаете %d опыта
+SUCC_BOMB_PLANT = [ABS] За закладку бомбы вы получаете %d опыта
+
+DEATH_NOTICE = [ABS] Ваш счетчик убийств обнулён.
+
+STREAK = [ABS] За серию из %d убийств, вы награждены %d бонусами
+STREAK_HS = [ABS] За серию из %d убийств в голову, вы награждены %d бонусами
+
+MENU_TITLE = \r[\yABS\r]\w Что хотите Take? ^n\dВаши бонусы : %d
+
+// \r \w \d \y 
+
+MENU_HANDLE_ONE = Take \r[AWP]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_TWO = Take \r[AK-47]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_THREE = Take \r[M4A1]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_FOUR = Take \r[%d$]\w			[%d]
+MENU_HANDLE_FIVE = Take \r[%d]\w ХП			[%d]
+MENU_HANDLE_SIX = Take \r[%d]\w опыта \y[ABS]\w		[%d]
+MENU_HANDLE_SEVEN = Take \rНевидимость [50%]\w		[%d]
+MENU_HANDLE_EIGHT = Take \rMEGA GRENADE\w		[%d]
+MENU_HANDLE_NINE = Take \rMEGA DEAGLE\w		[%d]
+MENU_HANDLE_OFF = \dНедостаточно бонусов
+
+SPECTATING_INF = Ник : %s ^nЗвание : %L ^nОпыт : [%d/%d] ^nБонусы : [%d]
+BLOCKED_MAP_BONUS = [ABS] Бонусы на этой карте заблокированы!
+BONUS_OFF = [ABS] Бонусы запрещены сервером.
+ONLY_ALIVE = [ABS] Только для живых игроков!
+ANEW_INFO = У вас есть %d бонусов^nНапишите в чат /anew
+NO_BOMB_PLANT = Недостаточно игроков для закладки бомбы (Нужно %d игроков)
+
+FIRST_BLOOD = %s получил %d опыта за первую кровь!
+
+[en]
+I_0		= Joining the Ranks
+I_1		= Soldier
+I_2		= Corporal
+I_3		= Junior Sergeant
+I_4		= Sergeant
+I_5		= Staff Sergeant
+I_6		= Sergeant Major
+I_7		= Ensign
+I_8		= Senior Ensign
+I_9		= Junior Lieutenant
+I_10		= Lieutenant
+I_11		= Senior Lieutenant
+I_12		= Captain
+I_13		= Major
+I_14		= Lieutenant Colonel
+I_15		= Colonel
+I_16		= Major General
+I_17		= Lieutenant General
+I_18		= Colonel General
+I_19		= Army General
+I_20		= Division commander
+I_21		= Miner
+I_22		= Sapper
+I_23		= Signalman
+I_24		= Shooter
+I_25		= Machine gunner
+I_26		= Sniper
+I_27		= Army commander
+I_28		= District Commander 
+I_29		= Marshal of Russian Federation
+
+ZVANIE 		= Rank:
+PL_XP 		= EXP : [%d/%d]
+PL_XP_STEXT	= EXP : %d of %d
+BONUSES 	= Bonuses : [%d]
+PL_MAX		= Maximum level reached.
+SEND_TEAM 	= To team
+A_NAME 		= Name :
+PLAYER 		= Player
+NEW_LEVEL 	= got a new rank - 
+CONTR 		= Congratulations to the fighter!
+GW_TITLE 	= What weapon do you want to take?
+NAME_ARMY 	= Army
+GROUP_VK	=   
+PRIFIX = ABS
+NEW_LVL_HUD = Player %s got a new rank^n[%L]
+
+EMPTY_MSG	= The message cannot be empty.
+ENOUGH_ROUND = [ABS] This menu can only be opened after %d round.
+ENOUGH_PLAYERS = [ABS] Not enough players to get experience (Needed %d players)
+
+CT_WIN = Counter-Terrorist Team Won!
+TT_WIN = Terrorist Team Won!
+
+KNIFE_KILL = [ABS] Perfect! You are rewarded with %d bonuses
+
+SUCC_BOMB_DEF = [ABS] You recieved %d exp for defusing a bomb
+SUCC_BOMB_PLANT = [ABS] You recieved %d exp for planting a bomb
+
+DEATH_NOTICE = [ABS] Your kill counter has been reset.
+
+STREAK = [ABS] For a streak of %d kills, you are rewarded with %d bonuses
+STREAK_HS = [ABS] For a streak of %d kills in head, you are rewarded with %d bonuses
+
+MENU_TITLE = \r[\yABS\r]\w What do you want to take? ^n\dYour bonuses : %d^n
+
+//
+//     \r \w \d \y 
+
+MENU_HANDLE_ONE = Take \rAWP\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_TWO = Take \rAK-47\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_THREE = Take \rM4A1\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_FOUR = Take \r%d$\w	[%d]
+MENU_HANDLE_FIVE = Take \r%d\w HP	[%d]
+MENU_HANDLE_SIX = Take \r%d\w EXP \yABS\w	[%d]
+MENU_HANDLE_SEVEN = Take \rInvisibility 50%\w	[%d]
+MENU_HANDLE_EIGHT = Take \rMEGA GRENADE\w
+MENU_HANDLE_NINE = Take \rMEGA DEAGLE\w
+MENU_HANDLE_OFF = \dNot enough Bonuses
+SPECTATING_INF = Name : %s ^nRank : %L ^nEXP : [%d/%d] ^nBonuses : [%d]
+
+BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are blocked!
+ONLY_ALIVE = [ABS] Only for alive players!
+ANEW_INFO = You have %d bonuses^nType /anew
+NO_BOMB_PLANT = Not enough players for planting a bomb (Needed %d players)
+
+FIRST_BLOOD = %s got %d exp for the first blood!
