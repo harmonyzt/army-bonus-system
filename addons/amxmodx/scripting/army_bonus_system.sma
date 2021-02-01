@@ -205,7 +205,6 @@ public plugin_cfg()
 		server_cmd("exec %s", szFile);
 }
 
-
 public bomb_planting(planter){
 	if(players_online<=get_pcvar_num(players_need)  &&  get_pcvar_num(bomb_mode)==1)
 	{
@@ -229,7 +228,6 @@ public bomb_planted(planter)
 	}
 	
 }
-
 
 public bomb_defused(defuser)
 {
@@ -280,7 +278,6 @@ public t_win(id){
 	}
 }
 
-
 public ct_win(id){
 	if(get_pcvar_num(ar_round_msgs)==1)
 	{
@@ -288,8 +285,6 @@ public ct_win(id){
 		show_dhudmessage(0,"%L",LANG_PLAYER,"CT_WIN")
 	}
 }
-
-
 
 public plugin_end(){
 	nvault_close(g_vault);
@@ -453,7 +448,6 @@ public EventDeath(){
 	}
 	return PLUGIN_CONTINUE;
 }
-
 
 public EventRoundStart()
 {
@@ -793,7 +787,6 @@ public plugin_natives(){
 public map_block(id)
 	return block	
 
-
 public native_get_user_expto(id){
 return gLevels[UserData[id][gLevel]]	
 }
@@ -856,9 +849,6 @@ public Info(){
 	}
 	return PLUGIN_CONTINUE 	
 }
-			
-
-
 
 ///Anew Menu
 public anew_menu(id){
@@ -928,7 +918,6 @@ if(round <= get_pcvar_num(ar_round_acc)){
 			menu_additem(menu,Text,"5")	
 		}
 		
-		
 		if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost6])){
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(Costs_cvar[menu_str3]),get_pcvar_num(Costs_cvar[cost6]));
 			menu_additem(menu,Text,"6")
@@ -967,12 +956,6 @@ if(round <= get_pcvar_num(ar_round_acc)){
 		menu_display(id,menu,0)
 		return PLUGIN_HANDLED
 		}
-
-
-
-
-
-
 
 public func_anew_menu(id, menu, item)
 {
@@ -1109,6 +1092,3 @@ DropWeaponSlot( iPlayer, iSlot ){
 public plugin_precache(){
 	precache_sound("abs/lvl_up.wav")
 }
-/* AMXX-Studio Notes - DO NOT MODIFY BELOW HERE
-*{\\ rtf1\\ ansi\\ deff0{\\ fonttbl{\\ f0\\ fnil Tahoma;}}\n\\ viewkind4\\ uc1\\ pard\\ lang1049\\ f0\\ fs16 \n\\ par }
-*/
