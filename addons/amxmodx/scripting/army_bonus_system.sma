@@ -13,10 +13,10 @@
 #include < fakemeta_util >
 #include < hamsandwich >
 #pragma tabsize 0
-#define ver "build-10.0-stable"
+#define ver "build-10.3-stable"
 
-new block=0			//Blocking poeple from opening anew menu
-new round			//Simple round counter
+new block=0			// Blocking poeple from opening anew menu
+new round			// Simple round counter
 new players_online
 new players_need
 new need_kills[33]
@@ -32,7 +32,8 @@ enum _:{
 
 new const restrict_bonus[][] =
 {
-"de_dust2"
+"fy_pool_day",
+"fy_snow"
 };
 
 new g_vault;
@@ -83,7 +84,7 @@ new const gNades[][] =
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
 }
 
-new gRestrictMaps,gAdminGMsg,gBonusLevel,gFlash,gSmoke,gHe,gHpbylevel,gApbylevel,
+new gRestrictMaps,gAdminGMsg,gFlash,gSmoke,gHe,gHpbylevel,gApbylevel,
 gArmyChat,gSlash,gTk,gLostXpTk,gLevelUpmsg,gAllChat,ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,  ar_round_acc
 ,ar_bonus_on,ar_bonus_streak,ar_bonus_streak_head,ar_kill_counter,ar_death_notice,ar_bombplant_exp, ar_def_exp,ar_round_msgs
 ,anew_dmg_deagle,anew_dmg_he
@@ -119,8 +120,8 @@ public plugin_init()
 	Costs_cvar[menu_str1]	=register_cvar("anew_menu1","10000")	// How much dollars you get from menu
 	Costs_cvar[menu_str2]	=register_cvar("anew_menu2","50")		//How much health you get from menu
 	Costs_cvar[menu_str3]	=register_cvar("anew_menu3","50")		//How much exp you get from menu
-	ar_colors		=register_cvar("ar_informer_color","100 100 100")
-	first_exp		=register_cvar("first_kill_exp","3")
+	ar_colors		=register_cvar("ar_informer_color","100100100")
+	first_exp		=register_cvar("ar_firstblood_exp","3")
 	ar_def_exp 		= register_cvar("ar_def_exp","3")
 	ar_bombplant_exp 	= register_cvar("ar_bombplant_exp","3")
 	players_need 		= register_cvar("ar_players_need","5")
@@ -133,25 +134,24 @@ public plugin_init()
 	ar_bonus_streak 		= register_cvar("ar_bonus_streak","2")
 	ar_kill_exp 		= register_cvar("ar_kill_exp","1")
 	ar_kill_head 		= register_cvar("ar_kill_head","2")
-	ar_kill_knife		 = register_cvar("ar_bonus_head","3")
-	ar_bonus_knife 		= register_cvar("ar_bonus_knife","3")
+	ar_kill_knife		 = register_cvar("ar_kill_exp_knife","3")
+	ar_bonus_knife 		= register_cvar("ar_kill_bonus_knife","3")
 	ar_bonus_newlvl		= register_cvar("ar_bonus_newlvl","8")
-	gRestrictMaps 		= register_cvar( "restrict_maps",     	"1");
-	gBonusLevel		= register_cvar( "level_bonus",     	"0");
-	gFlash			= register_cvar( "flash_nades",     	"0");
-	gSmoke			= register_cvar( "smoke_nades",     	"1");
-	gHe			= register_cvar( "he_nades",     	"1");
-	gHpbylevel		= register_cvar( "hp_by_level",     	"3");
-	gApbylevel		= register_cvar( "ap_by_level",     	"5");
-	gChatTop		= register_cvar( "chat_top",     	"1");
-	gArmyChat		= register_cvar( "army_chat",     	"1");
-	gAdminGMsg		= register_cvar( "admin_color",    	"1");
-	gSlash 			= register_cvar( "slash_messages",     	"1");
-	gTk 			= register_cvar( "team_kill_lost_xp",   	"1");
-	gLostXpTk 		= register_cvar( "lost_xp_val",     	"-1");
-	gLevelUpmsg		= register_cvar( "level_up_msg",     	"1");
-	gAllChat		= register_cvar( "all_chat",     	"1");	
-	mode_lvlup		= register_cvar("lvlup_mode","1")
+	gRestrictMaps 		= register_cvar( "ar_restrict_maps","1");
+	gFlash			= register_cvar( "ar_flash_nades","0");
+	gSmoke			= register_cvar( "ar_smoke_nades","1");
+	gHe			= register_cvar( "ar_henades","1");
+	gHpbylevel		= register_cvar( "ar_hp_by_level","3");
+	gApbylevel		= register_cvar( "ar_ap_by_level","5");
+	gChatTop		= register_cvar( "ar_chat_top","1");
+	gArmyChat		= register_cvar( "ar_chat","1");
+	gAdminGMsg		= register_cvar( "ar_admin_color","1");
+	gSlash 			= register_cvar( "ar_slash_messages","1");
+	gTk 			= register_cvar( "ar_tk_lose_xp","1");
+	gLostXpTk 		= register_cvar( "ar_tk_lose_val","1");
+	gLevelUpmsg		= register_cvar( "ar_level_up_msg","1");
+	gAllChat		= register_cvar( "ar_all_chat","1");	
+	mode_lvlup		= register_cvar("ar_lvlup_mode","1")
 	bomb_mode		= register_cvar("ar_bomb_mode","1")
 
 	register_logevent( "EventRoundStart", 2, "1=Round_Start" );
@@ -473,10 +473,8 @@ public EventRoundStart()
 			if(get_pcvar_num(gApbylevel) != 0)
 				set_user_armor(id,get_user_armor(id)+get_pcvar_num(gApbylevel)*UserData[id][gLevel]);	
 				
-			if(levelUp[id] == 1 && get_pcvar_num(gBonusLevel))
-			{
+			if(levelUp[id] == 1)
 				levelUp[id] = 0;
-			}
 		}
 	}
 	return PLUGIN_CONTINUE;
