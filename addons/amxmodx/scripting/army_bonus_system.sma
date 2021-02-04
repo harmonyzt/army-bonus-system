@@ -823,7 +823,7 @@ public Info(){
 			Red = clamp(str_to_num(rgb[0]), 0, 255)
 			Green = clamp(str_to_num(rgb[1]), 0, 255)
 			Blue = clamp(str_to_num(rgb[2]), 0, 255)
-			static buffer[192], len;
+			static buffer[256], len;
 			len = format(buffer, charsmax(buffer), "%L",LANG_PLAYER,"ZVANIE");
 			len += format(buffer[len], charsmax(buffer) - len, " %L",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
 			
