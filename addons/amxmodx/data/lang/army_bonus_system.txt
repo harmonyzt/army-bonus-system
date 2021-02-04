@@ -9,83 +9,77 @@ I_6		= Старшина
 I_7		= Прапорщик
 I_8		= Ст.Прапорщик
 I_9		= Мл.Лейтенант
-I_10		= Лейтенант
-I_11		= Ст.Лейтенант
-I_12		= Капитан
-I_13		= Майор
-I_14		= Подполковник
-I_15		= Полковник
-I_16		= Генерал-Майор
-I_17		= Генерал-Лейтенант
-I_18		= Генерал-Полковник
-I_19		= Генерал-Армии
-I_20		= Командир дивизии
-I_21		= Минер
-I_22		= Сапер
-I_23		= Связист
-I_24		= Стрелок
-I_25		= Пулеметчик
-I_26		= Снайпер
-I_27		= Командующий армией
-I_28		= Командующий округом
-I_29		= Маршал РФ
+I_10    = Лейтенант
+I_11    = Ст.Лейтенант
+I_12    = Капитан
+I_13    = Майор
+I_14    = Подполковник
+I_15    = Полковник
+I_16    = Генерал-Майор
+I_17    = Генерал-Лейтенант
+I_18    = Генерал-Полковник
+I_19    = Генерал-Армии
+I_20    = Командир дивизии
+I_21    = Минер
+I_22    = Сапер
+I_23    = Связист
+I_24    = Стрелок
+I_25    = Пулеметчик
+I_26    = Снайпер
+I_27    = Командующий армией
+I_28    = Командующий округом
+I_29    = Маршал РФ
 
-ZVANIE 		= Звание:
-PL_XP 		= Опыт : [%d/%d]
-PL_XP_STEXT	= Опыт : %d из %d
-BONUSES 	= Бонусы : [%d]
+FULL_INFO   = Ник: %s^nЗвание: %L
+PL_XP       = Опыт : [%d/%d]
 PL_MAX		= Достигнут максимум развития.
 SEND_TEAM 	= Команде
-A_NAME 		= Ник :
 PLAYER 		= Игрок
 NEW_LEVEL 	= получил новое звание - 
 CONTR 		= Поздравим бойца!
-GW_TITLE 	= Какое оружие хотите Take?
-NAME_ARMY 	= Армия
-GROUP_VK	=   
-PRIFIX = ABS
+PRIFIX      = ABS
 NEW_LVL_HUD = Игрок %s получил новое звание^n[%L]
 
-EMPTY_MSG	= Сообщение не может быть пустым.
-ENOUGH_ROUND = [ABS] Это меню можно открыть только после %d раунда.
-ENOUGH_PLAYERS = [ABS] Недостаточно игроков для начисления опыта (Нужно %d игроков)
+EMPTY_MSG       = Сообщение не может быть пустым.
+ENOUGH_ROUND    = [ABS] Это меню можно открыть только после %d раунда.
+ENOUGH_PLAYERS  = [ABS] Недостаточно игроков для начисления опыта (Нужно %d игроков)
 
-CT_WIN = Команда Контр-Террористов одержала победу!
-TT_WIN = Команда Террористов одержала победу!
+CT_WIN  = Команда Контр-Террористов одержала победу!
+TT_WIN  = Команда Террористов одержала победу!
 
-KNIFE_KILL = [ABS] Браво! Вы награждены %d бонусами.
+KNIFE_KILL  = [ABS] Браво! Вы награждены %d бонусами.
 
-SUCC_BOMB_DEF = [ABS] За разминирование бомбы вы получаете %d опыта
+SUCC_BOMB_DEF   = [ABS] За разминирование бомбы вы получаете %d опыта
 SUCC_BOMB_PLANT = [ABS] За закладку бомбы вы получаете %d опыта
 
-DEATH_NOTICE = [ABS] Ваш счетчик убийств обнулён.
+DEATH_NOTICE    = [ABS] Ваш счетчик убийств обнулён.
 
-STREAK = [ABS] За серию из %d убийств, вы награждены %d бонусами
-STREAK_HS = [ABS] За серию из %d убийств в голову, вы награждены %d бонусами
+STREAK      = [ABS] За серию из %d убийств, вы награждены %d бонусами
+STREAK_HS   = [ABS] За серию из %d убийств в голову, вы награждены %d бонусами
 
-MENU_TITLE = \r[\yABS\r]\w Что хотите Take? ^n\dВаши бонусы : %d
+MENU_TITLE  = \r[\yABS\r]\w Что хотите Take? ^n\dВаши бонусы : %d
 
 // \r \w \d \y 
 
-MENU_HANDLE_ONE = Take \r[AWP]\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_TWO = Take \r[AK-47]\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_THREE = Take \r[M4A1]\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_FOUR = Take \r[%d$]\w			[%d]
-MENU_HANDLE_FIVE = Take \r[%d]\w ХП			[%d]
-MENU_HANDLE_SIX = Take \r[%d]\w опыта \y[ABS]\w		[%d]
-MENU_HANDLE_SEVEN = Take \rНевидимость [50%]\w		[%d]
-MENU_HANDLE_EIGHT = Take \rMEGA GRENADE\w		[%d]
-MENU_HANDLE_NINE = Take \rMEGA DEAGLE\w		[%d]
-MENU_HANDLE_OFF = \dНедостаточно бонусов
+MENU_HANDLE_ONE     = Взять \r[AWP]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_TWO     = Взять \r[AK-47]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_THREE   = Взять \r[M4A1]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_FOUR    = Взять \r[%d$]\w			            [%d]
+MENU_HANDLE_FIVE    = Взять \r[%d]\w ХП		            	[%d]
+MENU_HANDLE_SIX     = Взять \r[%d]\w опыта \y[ABS]\w		[%d]
+MENU_HANDLE_SEVEN   = Взять \rНевидимость [50%]\w	    	[%d]
+MENU_HANDLE_EIGHT   = Взять \rMEGA GRENADE\w		        [%d]
+MENU_HANDLE_NINE    = Взять \rMEGA DEAGLE\w	            	[%d]
+MENU_HANDLE_OFF     = \dНедостаточно бонусов
 
-SPECTATING_INF = Ник : %s ^nЗвание : %L ^nОпыт : [%d/%d] ^nБонусы : [%d]
-BLOCKED_MAP_BONUS = [ABS] Бонусы на этой карте заблокированы!
-BONUS_OFF = [ABS] Бонусы запрещены сервером.
-ONLY_ALIVE = [ABS] Только для живых игроков!
-ANEW_INFO = У вас есть %d бонусов^nНапишите в чат /anew
-NO_BOMB_PLANT = Недостаточно игроков для закладки бомбы (Нужно %d игроков)
+SPECTATING_INF      = Ник : %s ^nЗвание : %L ^nОпыт : [%d/%d] ^nБонусы : [%d]
+BLOCKED_MAP_BONUS   = [ABS] Бонусы на этой карте заблокированы!
+BONUS_OFF           = [ABS] Бонусы запрещены сервером.
+ONLY_ALIVE          = [ABS] Только для живых игроков!
+ANEW_INFO           = У вас есть %d бонусов^nНапишите в чат /anew
+NO_BOMB_PLANT       = Недостаточно игроков для закладки бомбы (Нужно %d игроков)
 
-FIRST_BLOOD = %s получил %d опыта за первую кровь!
+FIRST_BLOOD         = %s получил %d опыта за первую кровь!
 
 [en]
 I_0		= Joining the Ranks
@@ -98,41 +92,35 @@ I_6		= Sergeant Major
 I_7		= Ensign
 I_8		= Senior Ensign
 I_9		= Junior Lieutenant
-I_10		= Lieutenant
-I_11		= Senior Lieutenant
-I_12		= Captain
-I_13		= Major
-I_14		= Lieutenant Colonel
-I_15		= Colonel
-I_16		= Major General
-I_17		= Lieutenant General
-I_18		= Colonel General
-I_19		= Army General
-I_20		= Division commander
-I_21		= Miner
-I_22		= Sapper
-I_23		= Signalman
-I_24		= Shooter
-I_25		= Machine gunner
-I_26		= Sniper
-I_27		= Army commander
-I_28		= District Commander 
-I_29		= Marshal of Russian Federation
+I_10	= Lieutenant
+I_11	= Senior Lieutenant
+I_12	= Captain
+I_13	= Major
+I_14	= Lieutenant Colonel
+I_15	= Colonel
+I_16	= Major General
+I_17	= Lieutenant General
+I_18	= Colonel General
+I_19	= Army General
+I_20	= Division commander
+I_21	= Miner
+I_22	= Sapper
+I_23	= Signalman
+I_24	= Shooter
+I_25	= Machine gunner
+I_26	= Sniper
+I_27	= Army commander
+I_28	= District Commander 
+I_29	= Marshal of Russian Federation
 
-ZVANIE 		= Rank:
-PL_XP 		= EXP : [%d/%d]
-PL_XP_STEXT	= EXP : %d of %d
-BONUSES 	= Bonuses : [%d]
+FULL_INFO   = Name: %s^nRank: %L
+PL_XP 		= EXP: [%d/%d]
 PL_MAX		= Maximum level reached.
 SEND_TEAM 	= To team
-A_NAME 		= Name :
 PLAYER 		= Player
 NEW_LEVEL 	= got a new rank - 
 CONTR 		= Congratulations to the fighter!
-GW_TITLE 	= What weapon do you want to take?
-NAME_ARMY 	= Army
-GROUP_VK	=   
-PRIFIX = ABS
+PRIFIX      = ABS
 NEW_LVL_HUD = Player %s got a new rank^n[%L]
 
 EMPTY_MSG	= The message cannot be empty.
@@ -154,20 +142,19 @@ STREAK_HS = [ABS] For a streak of %d kills in head, you are rewarded with %d bon
 
 MENU_TITLE = \r[\yABS\r]\w What do you want to take? ^n\dYour bonuses : %d^n
 
-//
 //     \r \w \d \y 
 
-MENU_HANDLE_ONE = Take \rAWP\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_TWO = Take \rAK-47\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_THREE = Take \rM4A1\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_FOUR = Take \r%d$\w	[%d]
-MENU_HANDLE_FIVE = Take \r%d\w HP	[%d]
-MENU_HANDLE_SIX = Take \r%d\w EXP \yABS\w	[%d]
-MENU_HANDLE_SEVEN = Take \rInvisibility 50%\w	[%d]
-MENU_HANDLE_EIGHT = Take \rMEGA GRENADE\w
-MENU_HANDLE_NINE = Take \rMEGA DEAGLE\w
-MENU_HANDLE_OFF = \dNot enough Bonuses
-SPECTATING_INF = Name : %s ^nRank : %L ^nEXP : [%d/%d] ^nBonuses : [%d]
+MENU_HANDLE_ONE     = Take \rAWP\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_TWO     = Take \rAK-47\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_THREE   = Take \rM4A1\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_FOUR    = Take \r%d$\w                      [%d]
+MENU_HANDLE_FIVE    = Take \r%d\w HP                    [%d]
+MENU_HANDLE_SIX     = Take \r%d\w EXP \yABS\w           [%d]
+MENU_HANDLE_SEVEN   = Take \rInvisibility 50%\w         [%d]
+MENU_HANDLE_EIGHT   = Take \rMEGA GRENADE\w             [%d]
+MENU_HANDLE_NINE    = Take \rMEGA DEAGLE\w              [%d]
+MENU_HANDLE_OFF     = \dNot enough Bonuses
+SPECTATING_INF      = Name : %s ^nRank : %L ^nEXP : [%d/%d] ^nBonuses : [%d]
 
 BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are blocked!
 ONLY_ALIVE = [ABS] Only for alive players!
