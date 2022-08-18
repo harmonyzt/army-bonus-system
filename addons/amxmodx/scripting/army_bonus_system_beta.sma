@@ -96,7 +96,6 @@ new first_exp
 public plugin_init()
 {
 	register_plugin("Army Bonus System", ver, "harmony");
-	register_cvar("abs",ver, FCVAR_SERVER | FCVAR_SPONLY);
 	register_clcmd("say /anew","anew_menu");
 
 	set_cvar_string("abs",ver);
@@ -107,50 +106,50 @@ public plugin_init()
 	anew_dmg_deagle 	= register_cvar("anew_dmg_deagle","1.3")
 	anew_dmg_he	= register_cvar("anew_dmg_he","2.0")
 	///END ANEW REGISTER
-	Costs_cvar[cost1]	=register_cvar("cost_anew_menu1","15")	// AWP COST	
-	Costs_cvar[cost2]	=register_cvar("cost_anew_menu2","15")	// AK47 COST
-	Costs_cvar[cost3]	=register_cvar("cost_anew_menu3","15")	// M4A1 COST
-	Costs_cvar[cost4]	=register_cvar("cost_anew_menu4","15")	// %d Money
-	Costs_cvar[cost5]	=register_cvar("cost_anew_menu5","5")	// %d Health
-	Costs_cvar[cost6]	=register_cvar("cost_anew_menu6","10")	// %d EXP
-	Costs_cvar[cost7]	=register_cvar("cost_anew_menu7","10")	// Invisibility
-	Costs_cvar[cost8]	=register_cvar("cost_anew_menu8","15")	// MEGA GRENADE
-	Costs_cvar[cost9]	=register_cvar("cost_anew_menu9","15")	// MEGA DEAGLE
-	Costs_cvar[menu_str1]	=register_cvar("anew_menu1","10000")	// How much dollars you get from menu
-	Costs_cvar[menu_str2]	=register_cvar("anew_menu2","50")		//How much health you get from menu
-	Costs_cvar[menu_str3]	=register_cvar("anew_menu3","50")		//How much exp you get from menu
-	first_exp		=register_cvar("ar_firstblood_exp","3")
-	ar_def_exp 		= register_cvar("ar_def_exp","3")
-	ar_bombplant_exp 	= register_cvar("ar_bombplant_exp","3")
-	players_need 		= register_cvar("ar_players_need","5")
-	ar_round_msgs 		= register_cvar("ar_round_msgs","0")
-	ar_bonus_on 		= register_cvar("ar_bonus_on","1")
+	Costs_cvar[cost1]		= register_cvar("cost_anew_menu1","15")	// AWP COST	
+	Costs_cvar[cost2]		= register_cvar("cost_anew_menu2","15")	// AK47 COST
+	Costs_cvar[cost3]		= register_cvar("cost_anew_menu3","15")	// M4A1 COST
+	Costs_cvar[cost4]		= register_cvar("cost_anew_menu4","15")	// %d Money
+	Costs_cvar[cost5]		= register_cvar("cost_anew_menu5","5")	// %d Health
+	Costs_cvar[cost6]		= register_cvar("cost_anew_menu6","10")	// %d EXP
+	Costs_cvar[cost7]		= register_cvar("cost_anew_menu7","10")	// Invisibility
+	Costs_cvar[cost8]		= register_cvar("cost_anew_menu8","15")	// MEGA GRENADE
+	Costs_cvar[cost9]		= register_cvar("cost_anew_menu9","15")	// MEGA DEAGLE
+	Costs_cvar[menu_str1]	= register_cvar("anew_menu1","10000")	// How much dollars you get from menu
+	Costs_cvar[menu_str2]	= register_cvar("anew_menu2","50")		//How much health you get from menu
+	Costs_cvar[menu_str3]	= register_cvar("anew_menu3","50")		//How much exp you get from menu
+	first_exp				= register_cvar("ar_firstblood_exp","3")
+	ar_def_exp 				= register_cvar("ar_def_exp","3")
+	ar_bombplant_exp 		= register_cvar("ar_bombplant_exp","3")
+	players_need 			= register_cvar("ar_players_need","5")
+	ar_round_msgs 			= register_cvar("ar_round_msgs","0")
+	ar_bonus_on 			= register_cvar("ar_bonus_on","1")
 	ar_death_notice 		= register_cvar("ar_death_notice","0")
 	ar_kill_counter 		= register_cvar("ar_kill_counter","0")
 	ar_bonus_streak_head 	= register_cvar("ar_bonus_streak_head","2")
-	ar_round_acc 		= register_cvar("ar_round_acc","1")
+	ar_round_acc 			= register_cvar("ar_round_acc","1")
 	ar_bonus_streak 		= register_cvar("ar_bonus_streak","2")
-	ar_kill_exp 		= register_cvar("ar_kill_exp","1")
-	ar_kill_head 		= register_cvar("ar_kill_head","2")
-	ar_kill_knife		 = register_cvar("ar_kill_exp_knife","3")
-	ar_bonus_knife 		= register_cvar("ar_kill_bonus_knife","3")
-	ar_bonus_newlvl		= register_cvar("ar_bonus_newlvl","8")
-	gRestrictMaps 		= register_cvar( "ar_restrict_maps","1");
-	gFlash			= register_cvar( "ar_flash_nades","0");
-	gSmoke			= register_cvar( "ar_smoke_nades","1");
-	gHe			= register_cvar( "ar_henades","1");
-	gHpbylevel		= register_cvar( "ar_hp_by_level","3");
-	gApbylevel		= register_cvar( "ar_ap_by_level","5");
-	gChatTop		= register_cvar( "ar_chat_top","1");
-	gArmyChat		= register_cvar( "ar_chat","1");
-	gAdminGMsg		= register_cvar( "ar_admin_color","1");
-	gSlash 			= register_cvar( "ar_slash_messages","1");
-	gTk 			= register_cvar( "ar_tk_lose_xp","1");
-	gLostXpTk 		= register_cvar( "ar_tk_lose_val","1");
-	gLevelUpmsg		= register_cvar( "ar_level_up_msg","1");
-	gAllChat		= register_cvar( "ar_all_chat","1");	
-	mode_lvlup		= register_cvar("ar_lvlup_mode","1")
-	bomb_mode		= register_cvar("ar_bomb_mode","1")
+	ar_kill_exp 			= register_cvar("ar_kill_exp","1")
+	ar_kill_head 			= register_cvar("ar_kill_head","2")
+	ar_kill_knife			= register_cvar("ar_kill_exp_knife","3")
+	ar_bonus_knife 			= register_cvar("ar_kill_bonus_knife","3")
+	ar_bonus_newlvl			= register_cvar("ar_bonus_newlvl","8")
+	gRestrictMaps 			= register_cvar( "ar_restrict_maps","1");
+	gFlash					= register_cvar( "ar_flash_nades","0");
+	gSmoke					= register_cvar( "ar_smoke_nades","1");
+	gHe						= register_cvar( "ar_henades","1");
+	gHpbylevel				= register_cvar( "ar_hp_by_level","3");
+	gApbylevel				= register_cvar( "ar_ap_by_level","5");
+	gChatTop				= register_cvar( "ar_chat_top","1");
+	gArmyChat				= register_cvar( "ar_chat","1");
+	gAdminGMsg				= register_cvar( "ar_admin_color","1");
+	gSlash 					= register_cvar( "ar_slash_messages","1");
+	gTk 					= register_cvar( "ar_tk_lose_xp","1");
+	gLostXpTk 				= register_cvar( "ar_tk_lose_val","1");
+	gLevelUpmsg				= register_cvar( "ar_level_up_msg","1");
+	gAllChat				= register_cvar( "ar_all_chat","1");	
+	mode_lvlup				= register_cvar("ar_lvlup_mode","1")
+	bomb_mode				= register_cvar("ar_bomb_mode","1")
 
 	register_logevent( "EventRoundStart", 2, "1=Round_Start" );
 	register_event( "DeathMsg","EventDeath","a");
@@ -364,8 +363,9 @@ public check_level(id){
 public EventDeath(){
 	static iKiller,iVictim,head,wpn[32]
 	iKiller = read_data(1);
+
 	if(!is_user_connected(iKiller))	//Fixed [Player out of range (0)]
-	return PLUGIN_HANDLED
+		return PLUGIN_HANDLED
 	
 	iVictim = read_data(2);
 	head = read_data(3);
@@ -377,9 +377,9 @@ public EventDeath(){
 		
 			new name[33]
 			get_user_name(iKiller,name,32)
-			UserData[iKiller][gExp]+=get_pcvar_num(first_exp)
+			UserData[iKiller][gExp] += get_pcvar_num(first_exp)
 			client_print(0,print_center,"%L",LANG_PLAYER,"FIRST_BLOOD",name,get_pcvar_num(first_exp))	
-			first_blood=0
+			first_blood = 0
 			return PLUGIN_HANDLED
 		
 		}
@@ -392,20 +392,20 @@ public EventDeath(){
 		if(head){	///If headshot
 			UserData[iKiller][HeadStr]++	//+1 in a headstreak
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_head);
-			UserData[iVictim][Streak]=0
-			UserData[iVictim][Streak]=0
-			UserData[iVictim][HeadStr]=0
-			UserData[iVictim][HeadStr]=0
+			UserData[iVictim][Streak] = 0
+			UserData[iVictim][Streak] = 0
+			UserData[iVictim][HeadStr] = 0
+			UserData[iVictim][HeadStr] = 0
 		}
 		
 		players[iVictim] = NONE	//Îáíóëÿåì âîçìèîæíîñòè ñóïåð ãðàíàòû è äèãëà
 		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16)	///Setting invis to 0
 		UserData[iKiller][Streak]++
 		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
-		UserData[iVictim][Streak]=0
-		UserData[iVictim][HeadStr]=0
-		need_kills[iVictim]=5
-		need_hs[iVictim]=3
+		UserData[iVictim][Streak] = 0
+		UserData[iVictim][HeadStr] = 0
+		need_kills[iVictim] = 5
+		need_hs[iVictim] = 3
 		
 		if(get_pcvar_num(ar_death_notice)==1){
 		ColorChat(iVictim,RED,"%L",LANG_PLAYER,"DEATH_NOTICE")
@@ -416,7 +416,7 @@ public EventDeath(){
 			
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak)	
 			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK",need_kills[iKiller],get_pcvar_num(ar_bonus_streak))
-			need_kills[iKiller]+=5
+			need_kills[iKiller] += 5
 			return PLUGIN_CONTINUE
 		}
 		
@@ -426,7 +426,7 @@ public EventDeath(){
 			
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak_head)	
 			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK_HS",need_hs[iKiller],get_pcvar_num(ar_bonus_streak_head))
-			need_hs[iKiller]+=4
+			need_hs[iKiller] += 4
 			return PLUGIN_CONTINUE
 			
 		}
@@ -436,10 +436,10 @@ public EventDeath(){
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_knife);
 			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
 			ColorChat(iKiller, GREEN,"%L",LANG_PLAYER,"KNIFE_KILL",get_pcvar_num(ar_bonus_knife))
-			UserData[iVictim][Streak]=0
-			UserData[iVictim][Streak]=0
-			UserData[iVictim][HeadStr]=0
-			UserData[iVictim][HeadStr]=0
+			UserData[iVictim][Streak] = 0
+			UserData[iVictim][Streak] = 0
+			UserData[iVictim][HeadStr] = 0
+			UserData[iVictim][HeadStr] = 0
 		}
 		check_level(iKiller);
 		
@@ -517,8 +517,8 @@ public register_player(id,data[]){
 	new szName[33];
 	get_user_name(id,szName,32);
 
-			UserData[id][gExp]= 0
-			UserData[id][gLevel]= 1;
+			UserData[id][gExp] = 0
+			UserData[id][gLevel] = 1;
 			UserData[id][g_Bonus] = 0		//Setting everything to 0 for new player
 			UserData[id][Streak] = 0	
 			UserData[id][HeadStr] = 0
