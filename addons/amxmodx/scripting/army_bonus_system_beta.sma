@@ -44,21 +44,21 @@ enum _:PlData
 
 enum _:Cvars
 {
-	cost1,
-	cost2,
-	cost3,
-	cost4,
-	cost5,
-	cost6,
-	cost7,
-	cost8,
-	cost9,
+	price1,
+	price2,
+	price3,
+	price4,
+	price5,
+	price6,
+	price7,
+	price8,
+	price9,
 	menu_str1,
 	menu_str2,
 	menu_str3
 };
 
-new Costs_cvar[Cvars]
+new price_cvar[Cvars]
 new gChatTop;
 new stats[8],bodyhits[8],irank;
 new UserData[50][PlData];
@@ -106,18 +106,18 @@ public plugin_init()
 	anew_dmg_deagle 	= register_cvar("anew_dmg_deagle","1.3")
 	anew_dmg_he	= register_cvar("anew_dmg_he","2.0")
 	///END ANEW REGISTER
-	Costs_cvar[cost1]		= register_cvar("cost_anew_menu1","15")	// AWP COST	
-	Costs_cvar[cost2]		= register_cvar("cost_anew_menu2","15")	// AK47 COST
-	Costs_cvar[cost3]		= register_cvar("cost_anew_menu3","15")	// M4A1 COST
-	Costs_cvar[cost4]		= register_cvar("cost_anew_menu4","15")	// %d Money
-	Costs_cvar[cost5]		= register_cvar("cost_anew_menu5","5")	// %d Health
-	Costs_cvar[cost6]		= register_cvar("cost_anew_menu6","10")	// %d EXP
-	Costs_cvar[cost7]		= register_cvar("cost_anew_menu7","10")	// Invisibility
-	Costs_cvar[cost8]		= register_cvar("cost_anew_menu8","15")	// MEGA GRENADE
-	Costs_cvar[cost9]		= register_cvar("cost_anew_menu9","15")	// MEGA DEAGLE
-	Costs_cvar[menu_str1]	= register_cvar("anew_menu1","10000")	// How much dollars you get from menu
-	Costs_cvar[menu_str2]	= register_cvar("anew_menu2","50")		//How much health you get from menu
-	Costs_cvar[menu_str3]	= register_cvar("anew_menu3","50")		//How much exp you get from menu
+	price_cvar[price1]		= register_cvar("price_anew_menu1","15")	// AWP price	
+	price_cvar[price2]		= register_cvar("price_anew_menu2","15")	// AK47 price
+	price_cvar[price3]		= register_cvar("price_anew_menu3","15")	// M4A1 price
+	price_cvar[price4]		= register_cvar("price_anew_menu4","15")	// %d Money
+	price_cvar[price5]		= register_cvar("price_anew_menu5","5")	// %d Health
+	price_cvar[price6]		= register_cvar("price_anew_menu6","10")	// %d EXP
+	price_cvar[price7]		= register_cvar("price_anew_menu7","10")	// Invisibility
+	price_cvar[price8]		= register_cvar("price_anew_menu8","15")	// MEGA GRENADE
+	price_cvar[price9]		= register_cvar("price_anew_menu9","15")	// MEGA DEAGLE
+	price_cvar[menu_str1]	= register_cvar("anew_menu1","10000")	// How much dollars you get from menu
+	price_cvar[menu_str2]	= register_cvar("anew_menu2","50")		//How much health you get from menu
+	price_cvar[menu_str3]	= register_cvar("anew_menu3","50")		//How much exp you get from menu
 	first_exp				= register_cvar("ar_firstblood_exp","3")
 	ar_def_exp 				= register_cvar("ar_def_exp","3")
 	ar_bombplant_exp 		= register_cvar("ar_bombplant_exp","3")
@@ -869,72 +869,72 @@ if(round <= get_pcvar_num(ar_round_acc)){
 		format(s_menu_it, charsmax(s_menu_it), "%L",LANG_PLAYER,"MENU_TITLE",UserData[id][g_Bonus])
 		
 		new menu = menu_create(s_menu_it, "func_anew_menu")
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost1])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE",get_pcvar_num(Costs_cvar[cost1]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE",get_pcvar_num(price_cvar[price1]));
 			menu_additem(menu, Text,"1")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu, Text,"1")
 		}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost2])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO",get_pcvar_num(Costs_cvar[cost2]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO",get_pcvar_num(price_cvar[price2]));
 			menu_additem(menu, Text,"2")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu, Text,"2")
 		}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost3])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE",get_pcvar_num(Costs_cvar[cost3]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE",get_pcvar_num(price_cvar[price3]));
 			menu_additem(menu, Text,"3")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu, Text,"3")
 		}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost4])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR",get_pcvar_num(Costs_cvar[menu_str1]),get_pcvar_num(Costs_cvar[cost4]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR",get_pcvar_num(price_cvar[menu_str1]),get_pcvar_num(price_cvar[price4]));
 			menu_additem(menu,Text,"4")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu,Text,"4")
 		}
 
-		if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost5])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE",get_pcvar_num(Costs_cvar[menu_str2]),get_pcvar_num(Costs_cvar[5]));
+		if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE",get_pcvar_num(price_cvar[menu_str2]),get_pcvar_num(price_cvar[5]));
 			menu_additem(menu,Text,"5")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu,Text,"5")	
 		}
 		
-		if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost6])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(Costs_cvar[menu_str3]),get_pcvar_num(Costs_cvar[cost6]));
+		if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(price_cvar[menu_str3]),get_pcvar_num(price_cvar[price6]));
 			menu_additem(menu,Text,"6")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu,Text,"6")
 		}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost7])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN",get_pcvar_num(Costs_cvar[cost7]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN",get_pcvar_num(price_cvar[price7]));
 			menu_additem(menu,Text,"7")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu,Text,"7")
 		}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost8])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT",get_pcvar_num(Costs_cvar[cost8]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT",get_pcvar_num(price_cvar[price8]));
 			menu_additem(menu,Text,"8")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 			menu_additem(menu,Text,"8")
 		}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost9])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE",get_pcvar_num(Costs_cvar[cost9]));
+		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
+			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE",get_pcvar_num(price_cvar[price9]));
 			menu_additem(menu,Text,"9")
 		}else{
 			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
@@ -962,87 +962,91 @@ public func_anew_menu(id, menu, item)
 	new key = str_to_num( data );
 	switch( key ){
 		case 1:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost1])){
-			give_item(id,"weapon_awp")
-			give_item(id,"weapon_hegrenade")
-			give_item(id,"weapon_flashbang")
-			cs_set_user_bpammo( id, CSW_AWP, 40);
-			set_user_armor(id, 100);
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AWP + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost1])
+			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
+				give_item(id,"weapon_awp")
+				give_item(id,"weapon_hegrenade")
+				give_item(id,"weapon_flashbang")
+				cs_set_user_bpammo( id, CSW_AWP, 40);
+				set_user_armor(id, 100);
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AWP + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price1])
 			}
 			}
 		case 2:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost2])){
-			give_item(id,"weapon_ak47");
-			give_item(id,"weapon_hegrenade")
-			give_item(id,"weapon_flashbang")
-			give_item(id,"weapon_flashbang")
-			cs_set_user_bpammo( id, CSW_AK47, 200);
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AK-47 + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost2]);
+			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
+				give_item(id,"weapon_ak47");
+				give_item(id,"weapon_hegrenade")
+				give_item(id,"weapon_flashbang")
+				give_item(id,"weapon_flashbang")
+				cs_set_user_bpammo( id, CSW_AK47, 200);
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AK-47 + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price2]);
 			}
 			}
 		case 3:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost3])){
-			give_item(id,"weapon_m4a1");
-			give_item(id,"weapon_hegrenade")
-			give_item(id,"weapon_flashbang")
-			give_item(id,"weapon_flashbang")
-			cs_set_user_bpammo( id, CSW_M4A1, 200);
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [M4A1+ ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost3]);
+			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
+				give_item(id,"weapon_m4a1");
+				give_item(id,"weapon_hegrenade")
+				give_item(id,"weapon_flashbang")
+				give_item(id,"weapon_flashbang")
+				cs_set_user_bpammo( id, CSW_M4A1, 200);
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [M4A1+ ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price3]);
 			}
 			}
 		case 4:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost4])){
-			cs_set_user_money(id,cs_get_user_money(id)+get_pcvar_num(Costs_cvar[menu_str1]),1)
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d$]",get_pcvar_num(Costs_cvar[menu_str1]))
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost4])
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
+				cs_set_user_money(id,cs_get_user_money(id)+get_pcvar_num(price_cvar[menu_str1]),1)
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d$]",get_pcvar_num(price_cvar[menu_str1]))
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price4])
 			}
 			}
 		case 5:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost5])){
-			set_user_health(id,get_user_health(id) + get_pcvar_num(Costs_cvar[menu_str2]))
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [+%d HP]",get_pcvar_num(Costs_cvar[menu_str2]))
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost5]);
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
+				set_user_health(id,get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]))
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [+%d HP]",get_pcvar_num(price_cvar[menu_str2]))
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price5]);
 			}
 			}
 		
 		case 6:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost6])){
-			UserData[id][gExp] += get_pcvar_num(Costs_cvar[menu_str3])
-			check_level(id)	
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Ranks]",get_pcvar_num(Costs_cvar[menu_str3]))
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost6]);
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
+				UserData[id][gExp] += get_pcvar_num(price_cvar[menu_str3])
+				check_level(id)	
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Ranks]",get_pcvar_num(price_cvar[menu_str3]))
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
 			}
 			}
 		
 		case 7:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost7])){
-			set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture,60)
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost7])
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
+				set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture,60)
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7])
 			}
 			}
 		
 		case 8:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost8])){
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
 			if(!user_has_weapon(id,CSW_HEGRENADE))
-			fm_give_item(id,"weapon_hegrenade")
-			players[id] |= (1<<MEGA_GRENADE)
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE")
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost8])
+				fm_give_item(id,"weapon_hegrenade")
+				players[id] |= (1<<MEGA_GRENADE)
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8])
+			} else {
+				players[id] |= (1<<MEGA_GRENADE)
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8])
 			}
 			}
 		
 		case 9:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(Costs_cvar[cost9])){
-			DropWeaponSlot(id,2)
-			fm_give_item(id,"weapon_deagle")
-			cs_set_user_bpammo(id,CSW_DEAGLE,35)
-			players[id] |= (1<<MEGA_DEAGLE)
-			ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA DEAGLE")
-			UserData[id][g_Bonus] -= get_pcvar_num(Costs_cvar[cost9])
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
+				DropWeaponSlot(id,2)
+				fm_give_item(id,"weapon_deagle")
+				cs_set_user_bpammo(id,CSW_DEAGLE,35)
+				players[id] |= (1<<MEGA_DEAGLE)
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA DEAGLE")
+				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price9])
 			}
 			}
 		///case add
