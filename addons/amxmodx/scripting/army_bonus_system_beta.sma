@@ -12,6 +12,8 @@
 #include < csx >
 #include < fakemeta_util >
 #include < hamsandwich >
+#include < army_bonus >
+
 #pragma tabsize 0
 #define ver "build-10.3-stable"
 
@@ -769,48 +771,6 @@ public msg_SayText(){
 	return PLUGIN_CONTINUE
 }
 
-public plugin_natives(){
-	register_native("get_user_exp", "native_get_user_exp", 1);
-	register_native("get_user_lvl", "native_get_user_lvl", 1);
-	register_native("set_user_exp", "native_set_user_exp", 1);
-	register_native("set_user_lvl", "native_set_user_lvl", 1);
-	register_native("get_user_rankname", "native_get_user_rankname", 1);
-	register_native("get_user_bonus", "native_get_user_bonus", 1);
-	register_native("set_user_bonus", "native_set_user_bonus", 1);
-	register_native("get_user_expto", "native_get_user_expto", 1);		//returns how much exp to new lvl
-	register_native("get_map_block","map_block",1)
-}
-
-public map_block(id)
-	return block	
-
-public native_get_user_expto(id){
-return gLevels[UserData[id][gLevel]]	
-}
-public native_get_user_bonus(id){
-return UserData[id][g_Bonus]	
-}
-public native_set_user_bonus(id,num){
-UserData[id][g_Bonus] = num;
-}
-public native_set_user_exp(id,num){
-	UserData[id][gExp] = num;
-}
-public native_set_user_lvl(id,num){
-	UserData[id][gLevel] = num;
-}
-public native_get_user_exp(id){
-	return UserData[id][gExp];
-}
-public native_get_user_lvl(id){
-	return UserData[id][gLevel];
-}
-public native_get_user_rankname(id){
-	static szRankName[64];
-	format(szRankName, charsmax(szRankName), "%L",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-	return szRankName;
-}
-
 public Info(){
 	for(new id = 1; id <= MaxPlayers; id++)
 	{
@@ -1086,4 +1046,47 @@ DropWeaponSlot( iPlayer, iSlot ){
 
 public plugin_precache(){
 	precache_sound("abs/lvl_up.wav")
+}
+
+public plugin_natives(){
+	register_native("get_user_exp", "native_get_user_exp", 1);
+	register_native("get_user_lvl", "native_get_user_lvl", 1);
+	register_native("set_user_exp", "native_set_user_exp", 1);
+	register_native("set_user_lvl", "native_set_user_lvl", 1);
+	register_native("get_user_rankname", "native_get_user_rankname", 1);
+	register_native("get_user_bonus", "native_get_user_bonus", 1);
+	register_native("set_user_bonus", "native_set_user_bonus", 1);
+	register_native("get_user_expto", "native_get_user_expto", 1);		//returns how much exp to new lvl
+	register_native("get_map_block","map_block",1)
+}
+
+public map_block(id){
+	return block	
+}
+
+public native_get_user_expto(id){
+return gLevels[UserData[id][gLevel]]	
+}
+public native_get_user_bonus(id){
+return UserData[id][g_Bonus]	
+}
+public native_set_user_bonus(id,num){
+UserData[id][g_Bonus] = num;
+}
+public native_set_user_exp(id,num){
+	UserData[id][gExp] = num;
+}
+public native_set_user_lvl(id,num){
+	UserData[id][gLevel] = num;
+}
+public native_get_user_exp(id){
+	return UserData[id][gExp];
+}
+public native_get_user_lvl(id){
+	return UserData[id][gLevel];
+}
+public native_get_user_rankname(id){
+	static szRankName[64];
+	format(szRankName, charsmax(szRankName), "%L",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+	return szRankName;
 }

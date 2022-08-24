@@ -1,8 +1,8 @@
-#include <amxmodx>
-#include <amxmisc>
-#include <dhudmessage>
-#include <fakemeta>
-#include <evil_army>
+#include < amxmodx >
+#include < amxmisc >
+#include < dhudmessage >
+#include < fakemeta >
+#include < army_bonus >
 
 #define PLUGIN "SPECLIST ARMY"
 #define VERSION "2.5"
@@ -42,8 +42,8 @@ public plugin_init()
 {
    register_plugin(PLUGIN, VERSION, AUTHOR);
    
-   ar_spec_mode = register_cvar("ar_spec_mode","2")      1 - HUD      2 - DHUD
-   register_cvar(PLUGIN, VERSION, FCVAR_SERVER, 0.0);
+   ar_spec_mode = register_cvar("ar_spec_mode","2");  //      1 - HUD      2 - DHUD
+   register_cvar(PLUGIN, VERSION);
    
    sy1 = CreateHudSyncObj();   
    set_task(UPDATEINTERVAL, "tskShowSpec", 123094, "", 500, "b", 0);
