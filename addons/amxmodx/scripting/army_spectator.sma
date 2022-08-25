@@ -37,7 +37,7 @@ new const CLS[][] = {
 "I_20"
 };
 
-new ar_spec_mode
+new ar_spec_mode;
 
 public plugin_init()
 {
@@ -73,12 +73,13 @@ public tskShowSpec()
       iExpTo = get_user_expto(player);
       iRnk = get_user_lvl(player);
       get_user_name(player, szName, charsmax(szName));
+
       format(szHud, charsmax(szHud), "%L", LANG_PLAYER, "SPECTATING_INF", szName, LANG_PLAYER, CLS[iRnk], iExp, iExpTo, get_user_bonus(player));
       
-      if(get_pcvar_num(ar_spec_mode)==1){
+      if(get_pcvar_num(ar_spec_mode) == 1){
          set_hudmessage(100, 100, 100,0.01, 0.16, 0, 0.0, UPDATEINTERVAL + 0.1, 0.0, 0.0, -1);
          ShowSyncHudMsg(pl[i], sy1, szHud);
-      }else{
+      } else {
          set_dhudmessage(100, 100, 100,0.01, 0.16, 0, 0.0, UPDATEINTERVAL + 0.1, 0.0, 0.0);
          show_dhudmessage(pl[i], szHud);
       }
