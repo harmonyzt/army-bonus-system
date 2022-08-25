@@ -416,7 +416,7 @@ public EventDeath(){
 			ColorChat(iVictim,RED,"%L",LANG_PLAYER,"DEATH_NOTICE");
 		}
 		
-		//KILLSTERAK
+		// KILLSTERAK
 		if(UserData[iKiller][Streak]>=need_kills[iKiller]){
 			
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak)	;
@@ -426,7 +426,7 @@ public EventDeath(){
 		}
 		
 		
-		//HEADSTREAK
+		// HEADSTREAK
 		if(UserData[iKiller][HeadStr]>=need_hs[iKiller]){
 			
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak_head);
@@ -436,14 +436,14 @@ public EventDeath(){
 			
 		}
 		
-		//KNIFE KILL
+		// KNIFE KILL
 		if(contain(wpn, "knife") != -1){
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_knife);
 			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
 			ColorChat(iKiller, GREEN,"%L",LANG_PLAYER,"KNIFE_KILL",get_pcvar_num(ar_bonus_knife));
 		}
-		check_level(iKiller);
 		
+		check_level(iKiller);
 	}
 	return PLUGIN_CONTINUE;
 }
