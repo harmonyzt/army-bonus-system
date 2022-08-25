@@ -219,7 +219,7 @@ public bomb_planting(planter){
 public bomb_planted(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 2)
 	{
-		ColorChat(planter,RED,"%L",LANG_PLAYER,"ENOUGH_PLAYERS",get_pcvar_num(players_need));	
+		ColorChat(planter,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));	
 		return;					
 	}else{
 		ColorChat(planter,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_PLANT",get_pcvar_num(ar_bombplant_exp));
@@ -231,7 +231,7 @@ public bomb_planted(planter){
 public bomb_defused(defuser){
 	if(players_online<=get_pcvar_num(players_need))
 	{
-		ColorChat(defuser,RED,"%L",LANG_PLAYER,"ENOUGH_PLAYERS",get_pcvar_num(players_need));
+		ColorChat(defuser,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));
 		return;
 	}else{
 		ColorChat(defuser,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_DEF",get_pcvar_num(ar_def_exp));
@@ -376,37 +376,38 @@ public EventDeath(){
 	
 	if(iKiller != iVictim && is_user_connected(iKiller) && is_user_connected(iVictim) && UserData[iKiller][gLevel] <= 29)	
 	{
-		if(first_blood == 1 && get_pcvar_num(first_exp)!=0){/// First Blood
+		// First Blood
+		if(first_blood == 1 && get_pcvar_num(first_exp) != 0){
 		
 			new name[33];
 			get_user_name(iKiller,name,32);
 			UserData[iKiller][gExp] += get_pcvar_num(first_exp);
-			client_print(0,print_center,"%L",LANG_PLAYER,"FIRST_BLOOD",name,get_pcvar_num(first_exp))	;
+			client_print(0,print_center,"%L",LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
 			first_blood = 0;
 			return PLUGIN_HANDLED;
 		
 		}
 		
+		// If teamkill
 		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim))
 		{
 			UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
 		}
 
-		/// If headshot
+		// If headshot
 		if(head){
 			UserData[iKiller][HeadStr]++
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_head);
 		}
 
-		// Remove from victim active ANEW mega perks
-		players[iVictim] = NONE;
-
 		// Remove invisibility perk from ANEW menu
-		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16)
+		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16);
 
 		UserData[iKiller][Streak]++
 		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
 
+		// Remove from victim any streaks and perks
+		players[iVictim] = NONE;
 		UserData[iVictim][Streak] = 0;
 		UserData[iVictim][HeadStr] = 0;
 		need_kills[iVictim] = 5;
@@ -418,22 +419,17 @@ public EventDeath(){
 		
 		// KILLSTERAK
 		if(UserData[iKiller][Streak]>=need_kills[iKiller]){
-			
-			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak)	;
+			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak);
 			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK",need_kills[iKiller],get_pcvar_num(ar_bonus_streak));
 			need_kills[iKiller] += 5;
-			return PLUGIN_CONTINUE;
 		}
 		
 		
 		// HEADSTREAK
-		if(UserData[iKiller][HeadStr]>=need_hs[iKiller]){
-			
+		if(UserData[iKiller][HeadStr] >= need_hs[iKiller]){
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak_head);
 			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK_HS",need_hs[iKiller],get_pcvar_num(ar_bonus_streak_head));
 			need_hs[iKiller] += 4;
-			return PLUGIN_CONTINUE;
-			
 		}
 		
 		// KNIFE KILL
@@ -481,8 +477,9 @@ public EventRoundStart()
 }
 
 ///
-///SAVE & LOAD DATA
+///		SAVE & LOAD DATA
 ///
+
 public load_data(id){
 	new szName[33];
 		get_user_name(id,szName,32);
@@ -493,11 +490,11 @@ public load_data(id){
 			next_load_data(id, data, sizeof(data) - 1);
 			return;
 		} else {
-			register_player(id,""); //REgistering new player in database
+			register_player(id,"");
 		}
 }
 
-public next_load_data(id,data[],len){		//Loading all data from player
+public next_load_data(id,data[],len){
 	new szName[33];
 	get_user_name(id,szName,32);
 	replace_all(data,len,"|"," ");		
@@ -559,12 +556,13 @@ public hookSay(id){
 	get_user_name(id,szName,31);
 	irank = get_user_stats(id,stats,bodyhits)
 	if(is_user_admin(id)){
-	if(get_pcvar_num(gChatTop) == 0){
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-	}else{
-	if(get_pcvar_num(gChatTop) == 1)
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-	}
+		if(get_pcvar_num(gChatTop) == 0){
+			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+		} else {
+			if(get_pcvar_num(gChatTop) == 1)
+			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+		}
+
 		switch(get_pcvar_num(gAdminGMsg))
 		{
 			case 1:
@@ -584,13 +582,12 @@ public hookSay(id){
 			}
 		}
 		Chat(id,0,get_pcvar_num(gAllChat));
-	}else {
-	if(get_pcvar_num(gChatTop) == 0){
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-	}else
-	if(get_pcvar_num(gChatTop) == 1){
-	Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-	}
+	} else {
+		if(get_pcvar_num(gChatTop) == 0){
+			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+		}else if(get_pcvar_num(gChatTop) == 1){
+			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+		}
 		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
 		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
 		Chat(id,0,get_pcvar_num(gAllChat));
@@ -757,7 +754,7 @@ public client_infochanged(id){
 	if(!equali(newname, oldname))
 	{
 		set_user_info(id,"name",oldname);
-		log_amx("[ABS] Namechange blocked.");
+		log_amx("[ABS] Name change blocked.");
 		return PLUGIN_HANDLED;
 	}
 	return PLUGIN_CONTINUE;
@@ -802,7 +799,7 @@ public Info(){
 	return PLUGIN_CONTINUE ;
 }
 
-///Anew Menu
+// Anew Menu
 public anew_menu(id){
 	
 if(get_pcvar_num(ar_bonus_on) == 0){
@@ -811,7 +808,7 @@ if(get_pcvar_num(ar_bonus_on) == 0){
 }
 
 if(restr_blocked == true){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"BLOCKED_MAP_BONUS");
+	ColorChat(id,RED,"%L",LANG_PLAYER,"BONUS_BLOCKED_MAP");
 	return PLUGIN_HANDLED;
 }
 
@@ -821,7 +818,7 @@ if(!is_user_alive(id)){
 }
 	
 if(round <= get_pcvar_num(ar_round_acc)){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"ENOUGH_ROUND",get_pcvar_num(ar_round_acc));
+	ColorChat(id,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_ROUNDS",get_pcvar_num(ar_round_acc));
 	return PLUGIN_HANDLED;
 }
 
