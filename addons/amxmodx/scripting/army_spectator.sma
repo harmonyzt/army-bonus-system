@@ -4,14 +4,15 @@
 #include < fakemeta >
 #include < army_bonus >
 
-#define PLUGIN "SPECLIST ARMY"
-#define VERSION "2.5"
+#define PLUGIN "ABS Spectator List"
+#define VERSION "2.6"
 #define AUTHOR "harmony"
 
-#define UPDATEINTERVAL 0.5
+#define UPDATEINTERVAL 1.0
 
 new sy1
-         //Getting Ranks from lang file
+
+// Getting ranks from the main lang file
 new const CLS[][] = {
 "I_0", 
 "I_1", 
@@ -41,10 +42,10 @@ new ar_spec_mode
 public plugin_init()
 {
    register_plugin(PLUGIN, VERSION, AUTHOR);
-   
-   ar_spec_mode = register_cvar("ar_spec_mode","2");  //      1 - HUD      2 - DHUD
+   register_dictionary("army_bonus_system.txt");
    register_cvar(PLUGIN, VERSION);
-   
+
+   ar_spec_mode = register_cvar("ar_spec_mode","2");  //      1 - HUD      2 - DHUD
    sy1 = CreateHudSyncObj();   
    set_task(UPDATEINTERVAL, "tskShowSpec", 123094, "", 500, "b", 0);
 }
@@ -72,7 +73,7 @@ public tskShowSpec()
       iExpTo = get_user_expto(player);
       iRnk = get_user_lvl(player);
       get_user_name(player, szName, charsmax(szName));
-      format(szHud, charsmax(szHud), "Ник : %s ^nЗвание : %L ^nОпыт : [%d/%d] ^nБонусы : %d", szName, LANG_PLAYER, CLS[iRnk], iExp, iExpTo, get_user_bonus(player));
+      format(szHud, charsmax(szHud), "%L", LANG_PLAYER, "SPECTATING_INF", szName, LANG_PLAYER, CLS[iRnk], iExp, iExpTo, get_user_bonus(player));
       
       if(get_pcvar_num(ar_spec_mode)==1){
          set_hudmessage(100, 100, 100,0.01, 0.16, 0, 0.0, UPDATEINTERVAL + 0.1, 0.0, 0.0, -1);

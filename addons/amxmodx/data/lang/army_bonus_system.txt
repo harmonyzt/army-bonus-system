@@ -39,6 +39,7 @@ NEW_LEVEL 	= получил новое звание -
 CONTR 		= Поздравим бойца!
 PRIFIX      = ABS
 NEW_LVL_HUD = Игрок %s получил новое звание^n[%L]
+SPECTATING_INF      = Ник: %s ^nЗвание: %L ^nОпыт: [%d/%d] ^nБонусы: [%d]
 
 EMPTY_MSG       = Сообщение не может быть пустым.
 ENOUGH_ROUND    = [ABS] Это меню можно открыть только после %d раунда.
@@ -72,7 +73,6 @@ MENU_HANDLE_EIGHT   = Взять \rMEGA GRENADE\w		        [%d]
 MENU_HANDLE_NINE    = Взять \rMEGA DEAGLE\w	            	[%d]
 MENU_HANDLE_OFF     = \dНедостаточно бонусов
 
-SPECTATING_INF      = Ник : %s ^nЗвание : %L ^nОпыт : [%d/%d] ^nБонусы : [%d]
 BLOCKED_MAP_BONUS   = [ABS] Бонусы на этой карте заблокированы!
 BONUS_OFF           = [ABS] Бонусы запрещены сервером.
 ONLY_ALIVE          = [ABS] Только для живых игроков!
@@ -122,13 +122,14 @@ NEW_LEVEL 	= got a new rank -
 CONTR 		= Congratulations to the fighter!
 PRIFIX      = ABS
 NEW_LVL_HUD = Player %s got a new rank^n[%L]
+SPECTATING_INF      = Name: %s ^nRank: %L ^nEXP: [%d/%d] ^nBonuses: [%d]
 
 EMPTY_MSG	= The message cannot be empty.
-ENOUGH_ROUND = [ABS] This menu can only be opened after %d round.
-ENOUGH_PLAYERS = [ABS] Not enough players to get experience (Needed %d players)
+ENOUGH_ROUND = [ABS] This menu can only be opened after %d round(s).
+ENOUGH_PLAYERS = [ABS] Not enough players to get EXP (Need %d players)
 
-CT_WIN = Counter-Terrorist Team Won!
-TT_WIN = Terrorist Team Won!
+CT_WIN = Counter-Terrorists Won!
+TT_WIN = Terrorists Won!
 
 KNIFE_KILL = [ABS] Perfect! You are rewarded with %d bonuses
 
@@ -154,7 +155,6 @@ MENU_HANDLE_SEVEN   = Take \rInvisibility 50%\w         [%d]
 MENU_HANDLE_EIGHT   = Take \rMEGA GRENADE\w             [%d]
 MENU_HANDLE_NINE    = Take \rMEGA DEAGLE\w              [%d]
 MENU_HANDLE_OFF     = \dNot enough Bonuses
-SPECTATING_INF      = Name : %s ^nRank : %L ^nEXP : [%d/%d] ^nBonuses : [%d]
 
 BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are blocked!
 ONLY_ALIVE = [ABS] Only for alive players!
