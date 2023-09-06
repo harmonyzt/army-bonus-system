@@ -1,7 +1,3 @@
-//////Big Thanks To:
-///[Arctic or Arctiq] - For original code.
-//////
-
 #include < amxmodx >
 #include < amxmisc >
 #include < fun >
@@ -14,11 +10,11 @@
 #include < hamsandwich >
 #include < army_bonus >
 
-#pragma tabsize 0
-#define ver "build-10.4-stable"
+#pragma tabsize 0;
+#define ver "build-11-stable"
 
-new block = 0;			// Blocking poeple from opening anew menu
-new round;			// Simple round counter
+new block = 0;      // For blocking poeple from opening anew menu
+new round;          // Round counter TODO: Remove
 new players_online;
 new players_need;
 new need_kills[33];
@@ -60,9 +56,9 @@ enum _:Cvars
 	menu_str3
 };
 
-new price_cvar[Cvars]
+new price_cvar[Cvars];
 new gChatTop;
-new stats[8],bodyhits[8],irank;
+new stats[8], bodyhits[8], irank;
 new UserData[50][PlData];
 new gMessage[256];
 new MaxPlayers,levelUp[33],gSayText;
@@ -86,9 +82,10 @@ new const gNades[][] =
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
 };
 
-new gRestrictMaps,gAdminGMsg,gFlash,gSmoke,gHe,gHpbylevel,gApbylevel,
-gArmyChat,gSlash,gTk,gLostXpTk,gLevelUpmsg,gAllChat,ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,  ar_round_acc
-,ar_bonus_on,ar_bonus_streak,ar_bonus_streak_head,ar_kill_counter,ar_death_notice,ar_bombplant_exp, ar_def_exp,ar_round_msgs
+new gRestrictMaps, gAdminGMsg, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel,
+gArmyChat, gSlash, gTk, gLostXpTk, gLevelUpmsg, gAllChat
+new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,  ar_round_acc
+,ar_bonus_on,ar_bonus_streak,ar_bonus_streak_head,ar_death_notice,ar_bombplant_exp, ar_def_exp,ar_round_msgs
 ,anew_dmg_deagle,anew_dmg_he;
 new mode_lvlup;
 new bomb_mode;
@@ -97,17 +94,17 @@ new first_exp;
 
 public plugin_init()
 {
-	register_plugin("Army Bonus System", ver, "harmony");
+	register_plugin("Army Bonus System", ver, "harmony")
 	register_clcmd("say /anew","anew_menu");
-
-	set_cvar_string("abs",ver);
+    set_cvar_string("abs",ver);
+    
 	register_event("SendAudio", "t_win", "a", "2&%!MRAD_terwin");
 	register_event("SendAudio", "ct_win", "a", "2&%!MRAD_ctwin");
 	
-	/// ANEW Register
-	anew_dmg_deagle 	= register_cvar("anew_dmg_deagle","1.3");
-	anew_dmg_he	= register_cvar("anew_dmg_he","2.0");
-	price_cvar[price1]		= register_cvar("price_anew_menu1","15");	// AWP price	
+	/// Register prices
+	anew_dmg_deagle 	    = register_cvar("anew_dmg_deagle","1.3");
+	anew_dmg_he	            = register_cvar("anew_dmg_he","2.0");
+	price_cvar[price1]		= register_cvar("price_anew_menu1","15");	// AWP price
 	price_cvar[price2]		= register_cvar("price_anew_menu2","15");	// AK47 price
 	price_cvar[price3]		= register_cvar("price_anew_menu3","15");	// M4A1 price
 	price_cvar[price4]		= register_cvar("price_anew_menu4","15");	// %d Money
@@ -119,8 +116,8 @@ public plugin_init()
 	price_cvar[menu_str1]	= register_cvar("anew_menu1","10000");		// How much dollars you get from menu
 	price_cvar[menu_str2]	= register_cvar("anew_menu2","50");			// How much health you get from menu
 	price_cvar[menu_str3]	= register_cvar("anew_menu3","50");			// How much exp you get from menu
-	/// End of ANEW Register
 
+    // Register other plugin CVars
 	first_exp				= register_cvar("ar_firstblood_exp","3");
 	ar_def_exp 				= register_cvar("ar_def_exp","3");
 	ar_bombplant_exp 		= register_cvar("ar_bombplant_exp","3");
@@ -128,7 +125,6 @@ public plugin_init()
 	ar_round_msgs 			= register_cvar("ar_round_msgs","0");
 	ar_bonus_on 			= register_cvar("ar_bonus_on","1");
 	ar_death_notice 		= register_cvar("ar_death_notice","0");
-	ar_kill_counter 		= register_cvar("ar_kill_counter","0");
 	ar_bonus_streak_head 	= register_cvar("ar_bonus_streak_head","2");
 	ar_round_acc 			= register_cvar("ar_round_acc","1");
 	ar_bonus_streak 		= register_cvar("ar_bonus_streak","2");
@@ -154,46 +150,42 @@ public plugin_init()
 	mode_lvlup				= register_cvar("ar_lvlup_mode","1");
 	bomb_mode				= register_cvar("ar_bomb_mode","1");
 
+	register_dictionary("army_bonus_system.txt");
 	register_logevent( "EventRoundStart", 2, "1=Round_Start" );
 	register_event( "DeathMsg","EventDeath","a");
 	register_event("HLTV", "on_new_round", "a", "1=0", "2=0");
 	register_message(get_user_msgid("SayText"), "msg_SayText");
 	RegisterHam(Ham_TakeDamage,"player","TakeDamage");
-	
+	set_task(1.0,"Info",_,_,_, "b");
+
 	gSayText = get_user_msgid ("SayText");
-	
 	MaxPlayers = get_maxplayers();
-	
-	register_dictionary("army_bonus_system.txt");
 	g_vault = nvault_open("army_bonus_system");	
-	if(get_pcvar_num(gArmyChat))
-	{
+	g_iMsgIdBarTime = get_user_msgid("BarTime");
+
+	if(get_pcvar_num(gArmyChat)){
 		register_clcmd("say", "hookSay");
 		register_clcmd("say_team", "hookSayTeam");
 	}
-	set_task(1.0,"Info",_,_,_, "b");
-	g_iMsgIdBarTime = get_user_msgid("BarTime");
-	
-	
 
-if(get_pcvar_num(gRestrictMaps)){
-		new szMapName[64];
-		get_mapname(szMapName,63);
-		for(new a = 0; a < sizeof restrict_bonus; a++)
-		{
-			if(equal(szMapName, restrict_bonus[a]))
-			{
-				restr_blocked = true;
-				block = 1;
-				log_amx("[ABS] Bonus menu is blocked on map [%s].",restrict_bonus[a]);
-				break;
-			} else {
-				restr_blocked = false;
-				block = 0;
-			}	
-		}
-	}
+    if(get_pcvar_num(gRestrictMaps)){
+        new szMapName[64];
+        get_mapname(szMapName,63);
+
+        for(new a = 0; a < sizeof restrict_bonus; a++){
+            if(equal(szMapName, restrict_bonus[a])){
+                restr_blocked = true;
+                block = 1;
+                log_amx("[ABS] Bonus menu is blocked on map [%s].",restrict_bonus[a]);
+                break;
+            }else{
+                restr_blocked = false;
+                block = 0;
+            }	
+        }
+    }
 }
+
 
 public plugin_cfg(){
 	new szCfgDir[64], szFile[192];
@@ -208,7 +200,7 @@ public bomb_planting(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 1){
 		client_print(planter,print_center,"%L",LANG_PLAYER,"NO_BOMB_PLANT",get_pcvar_num(players_need));
 
-		///Switching to knife and then apply invisible 'planting' status which removes it completely
+		// Fix for a planting status being played even if you're not planting a bomb
 		engclient_cmd(planter,"weapon_knife");
 		message_begin(MSG_ONE, g_iMsgIdBarTime, _, planter);
 		write_short(0);
@@ -217,25 +209,22 @@ public bomb_planting(planter){
 }
 
 public bomb_planted(planter){
-	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 2)
-	{
+	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 2) {
 		ColorChat(planter,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));	
 		return;					
-	}else{
+	} else {
 		ColorChat(planter,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_PLANT",get_pcvar_num(ar_bombplant_exp));
 		UserData[planter][gExp]+=get_pcvar_num(ar_bombplant_exp);
 	}
-	
 }
 
 public bomb_defused(defuser){
-	if(players_online<=get_pcvar_num(players_need))
+	if(players_online <= get_pcvar_num(players_need))
 	{
 		ColorChat(defuser,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));
-		return;
 	}else{
 		ColorChat(defuser,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_DEF",get_pcvar_num(ar_def_exp));
-		UserData[defuser][gExp]+=get_pcvar_num(ar_def_exp);
+		UserData[defuser][gExp] += get_pcvar_num(ar_def_exp);
 	}
 }
 
@@ -303,14 +292,15 @@ public client_disconnect(id){
 	players_online--
 	UserData[id][Streak] = 0;
 	UserData[id][HeadStr] = 0;
-	//UserData[id] = UserData[0];
+	// This was a possible fix for data being erased. Unused
+	// UserData[id] = UserData[0];
 	players[id] = NONE;
 	save_usr(id);
 }
 
 public on_new_round(id){	
 	round++
-	first_blood=1
+	first_blood = 1
 }
 
 public check_level(id){
@@ -336,7 +326,7 @@ public check_level(id){
 		}
 		case 2:
 		{
-			if(get_pcvar_num(gLevelUpmsg)==1){
+			if(get_pcvar_num(gLevelUpmsg) == 1){
 				new szName[33];
 				get_user_name(id, szName, 32);
 				UserData[id][g_Bonus]+=get_pcvar_num(ar_bonus_newlvl)
@@ -367,7 +357,7 @@ public EventDeath(){
 	static iKiller,iVictim,head,wpn[32]
 	iKiller = read_data(1);
 
-	if(!is_user_connected(iKiller))	//Fixed [Player out of range (0)]
+	if(!is_user_connected(iKiller))	// Fixed [Player out of range (0)]
 		return PLUGIN_HANDLED
 	
 	iVictim = read_data(2);
@@ -378,29 +368,26 @@ public EventDeath(){
 	{
 		// First Blood
 		if(first_blood == 1 && get_pcvar_num(first_exp) != 0){
-		
 			new name[33];
 			get_user_name(iKiller,name,32);
 			UserData[iKiller][gExp] += get_pcvar_num(first_exp);
 			client_print(0,print_center,"%L",LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
 			first_blood = 0;
 			return PLUGIN_HANDLED;
-		
 		}
 		
-		// If teamkill
+		// Teamkill
 		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim))
-		{
 			UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
-		}
 
-		// If headshot
+
+		// Headshot
 		if(head){
 			UserData[iKiller][HeadStr]++
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_head);
 		}
 
-		// Remove invisibility perk from ANEW menu
+		// Remove invisibility if player has it
 		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16);
 
 		UserData[iKiller][Streak]++
@@ -413,10 +400,9 @@ public EventDeath(){
 		need_kills[iVictim] = 5;
 		need_hs[iVictim] = 3;
 		
-		if(get_pcvar_num(ar_death_notice) == 1){
+		if(get_pcvar_num(ar_death_notice) == 1)
 			ColorChat(iVictim,RED,"%L",LANG_PLAYER,"DEATH_NOTICE");
-		}
-		
+	
 		// KILLSTERAK
 		if(UserData[iKiller][Streak]>=need_kills[iKiller]){
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak);
@@ -438,14 +424,12 @@ public EventDeath(){
 			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
 			ColorChat(iKiller, GREEN,"%L",LANG_PLAYER,"KNIFE_KILL",get_pcvar_num(ar_bonus_knife));
 		}
-		
 		check_level(iKiller);
 	}
 	return PLUGIN_CONTINUE;
 }
 
-public EventRoundStart()
-{
+public EventRoundStart(){
 	for(new id = 1; id <= MaxPlayers; id++)
 	{
 		save_usr(id);
@@ -482,23 +466,24 @@ public EventRoundStart()
 
 public load_data(id){
 	new szName[33];
-		get_user_name(id,szName,32);
+	
+    get_user_name(id,szName,32);
 
-		static data[256], timestamp;
-		if(nvault_lookup(g_vault, szName, data, sizeof(data) - 1, timestamp) )
-		{
+	static data[256], timestamp;
+		if(nvault_lookup(g_vault, szName, data, sizeof(data) - 1, timestamp) ){
 			next_load_data(id, data, sizeof(data) - 1);
 			return;
 		} else {
 			register_player(id,"");
-		}
+	}
 }
 
 public next_load_data(id,data[],len){
 	new szName[33];
+    new exp[10],level[10],bonus[10],rank[10];
+
 	get_user_name(id,szName,32);
-	replace_all(data,len,"|"," ");		
-	new exp[10],level[10],bonus[10],rank[10];
+	replace_all(data,len,"|"," ");
 	parse(data,exp,9,level,9,bonus,9,rank,9);
 
 	UserData[id][gExp]= str_to_num(exp);
@@ -740,14 +725,16 @@ stock send_message(const message[], const id, const i){
 stock is_has_slash(const Message[]){
 	if(Message[0] == '/')
 		return true;
-		
+
 	return false;
 }
 
 public client_infochanged(id){
 	new newname[32], oldname[32];
+
 	get_user_info(id, "name", newname,31);
 	get_user_name(id, oldname, 31);
+
 	if(!is_user_connected(id) || is_user_bot(id)) 
 		return PLUGIN_CONTINUE;
 		
@@ -755,15 +742,17 @@ public client_infochanged(id){
 	{
 		set_user_info(id,"name",oldname);
 		log_amx("[ABS] Name change blocked.");
+
 		return PLUGIN_HANDLED;
 	}
+
 	return PLUGIN_CONTINUE;
 }
 
 public msg_SayText(){
 	new arg[32];
 	get_msg_arg_string(2, arg, 31);
-	if(containi(arg,"name")!=-1)
+	if(containi(arg,"name") != -1)
 		return PLUGIN_HANDLED
 
 	return PLUGIN_CONTINUE;
@@ -788,10 +777,6 @@ public Info(){
 			set_dhudmessage(100, 100, 100, 0.01, 0.16, 0, 1.0, 1.0, _, _, _);
 			show_dhudmessage(id,"%s", buffer);
 
-			if(get_pcvar_num(ar_kill_counter)==1){	
-				set_dhudmessage(100, 100, 100, 0.01, 0.85, 0, 1.0, 1.0);
-				show_dhudmessage(id, "Ð£Ð±Ð¸ÑÐ¾ : %d ^nÐ Ð³Ð¾Ð»Ð¾Ð²Ñ : %d",UserData[id][Streak],UserData[id][HeadStr]);
-			}
 			set_dhudmessage(100, 100, 100,-1.0,0.90, 0, 1.0, 1.0);
 			show_dhudmessage(id,"%L",LANG_PLAYER,"ANEW_INFO", UserData[id][g_Bonus]);
 		}
@@ -822,90 +807,90 @@ if(round <= get_pcvar_num(ar_round_acc)){
 	return PLUGIN_HANDLED;
 }
 
-		static s_menu_it[700];
-		new Text[1024];
-		format(s_menu_it, charsmax(s_menu_it), "%L",LANG_PLAYER,"MENU_TITLE",UserData[id][g_Bonus]);
-		
-		new menu = menu_create(s_menu_it, "func_anew_menu");
+	static s_menu_it[700];
+	new Text[1024];
+	format(s_menu_it, charsmax(s_menu_it), "%L",LANG_PLAYER,"MENU_TITLE",UserData[id][g_Bonus]);
+	new menu = menu_create(s_menu_it, "func_anew_menu");
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE",get_pcvar_num(price_cvar[price1]));
-			menu_additem(menu, Text,"1");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu, Text,"1");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE",get_pcvar_num(price_cvar[price1]));
+		menu_additem(menu, Text,"1");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu, Text,"1");
+	}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO",get_pcvar_num(price_cvar[price2]));
-			menu_additem(menu, Text,"2");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu, Text,"2");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO",get_pcvar_num(price_cvar[price2]));
+		menu_additem(menu, Text,"2");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu, Text,"2");
+	}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE",get_pcvar_num(price_cvar[price3]));
-			menu_additem(menu, Text,"3");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu, Text,"3");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE",get_pcvar_num(price_cvar[price3]));
+		menu_additem(menu, Text,"3");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu, Text,"3");
+	}
 
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR",get_pcvar_num(price_cvar[menu_str1]),get_pcvar_num(price_cvar[price4]));
-			menu_additem(menu,Text,"4");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"4");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR",get_pcvar_num(price_cvar[menu_str1]),get_pcvar_num(price_cvar[price4]));
+		menu_additem(menu,Text,"4");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"4");
+	}
 
-		if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE",get_pcvar_num(price_cvar[menu_str2]),get_pcvar_num(price_cvar[5]));
-			menu_additem(menu,Text,"5");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"5");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE",get_pcvar_num(price_cvar[menu_str2]),get_pcvar_num(price_cvar[5]));
+		menu_additem(menu,Text,"5");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"5");
+	}
 		
-		if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(price_cvar[menu_str3]),get_pcvar_num(price_cvar[price6]));
-			menu_additem(menu,Text,"6");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"6");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(price_cvar[menu_str3]),get_pcvar_num(price_cvar[price6]));
+		menu_additem(menu,Text,"6");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"6");
+	}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN",get_pcvar_num(price_cvar[price7]));
-			menu_additem(menu,Text,"7");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"7");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN",get_pcvar_num(price_cvar[price7]));
+		menu_additem(menu,Text,"7");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"7");
+	}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT",get_pcvar_num(price_cvar[price8]));
-			menu_additem(menu,Text,"8");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"8");
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT",get_pcvar_num(price_cvar[price8]));
+		menu_additem(menu,Text,"8");
+	}else{
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"8");
+	}
 		
-		if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE",get_pcvar_num(price_cvar[price9]));
-			menu_additem(menu,Text,"9");
-		}else{
-			formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-			menu_additem(menu,Text,"9");
-		}
-		
-		menu_setprop(menu, MPROP_BACKNAME, "ÐÐ°Ð·Ð°Ð´");
-		menu_setprop(menu, MPROP_NEXTNAME, "ÐÐ°Ð»ÐµÐµ");
-		menu_setprop(menu, MPROP_EXITNAME, "ÐÑÑÐ¾Ð´");
-		menu_display(id,menu,0);
-		return PLUGIN_HANDLED;
-		}
+	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE",get_pcvar_num(price_cvar[price9]));
+		menu_additem(menu,Text,"9");
+	} else {
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+		menu_additem(menu,Text,"9");
+	}
+	
+    menu_setprop(menu, MPROP_BACKNAME, "ÐÐ°Ð·Ð°Ð´");
+	menu_setprop(menu, MPROP_NEXTNAME, "ÐÐ°Ð»ÐµÐµ");
+	menu_setprop(menu, MPROP_EXITNAME, "ÐÑÑÐ¾Ð´");
+	menu_display(id,menu,0);
+
+	return PLUGIN_HANDLED;
+}
 
 public func_anew_menu(id, menu, item)
 {
@@ -916,7 +901,7 @@ public func_anew_menu(id, menu, item)
 
 	new data[6], iName[64];
 	new access, callback;
-     
+	 
 	menu_item_getinfo( menu, item, access, data,5, iName, 63, callback );
 	new key = str_to_num( data );
 	switch( key ){
@@ -1008,9 +993,9 @@ public func_anew_menu(id, menu, item)
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price9]);
 			}
 			}
-		///case add
+
 		}
-	    return PLUGIN_HANDLED;
+		return PLUGIN_HANDLED;
 }
 
 DropWeaponSlot( iPlayer, iSlot ){
@@ -1063,14 +1048,6 @@ public map_block(id){
 	return block;
 }
 
-public native_get_user_expto(id){
-	return gLevels[UserData[id][gLevel]];	
-}
-
-public native_get_user_bonus(id){
-	return UserData[id][g_Bonus];
-}
-
 public native_set_user_bonus(id,num){
 	UserData[id][g_Bonus] = num;
 }
@@ -1089,6 +1066,14 @@ public native_get_user_exp(id){
 
 public native_get_user_lvl(id){
 	return UserData[id][gLevel];
+}
+
+public native_get_user_expto(id){
+	return gLevels[UserData[id][gLevel]];	
+}
+
+public native_get_user_bonus(id){
+	return UserData[id][g_Bonus];
 }
 
 public native_get_user_rankname(id){
