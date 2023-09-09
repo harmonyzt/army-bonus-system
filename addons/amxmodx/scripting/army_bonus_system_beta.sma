@@ -777,13 +777,13 @@ public plugin_precache(){
 public plugin_natives(){
 	register_native("get_user_exp", "native_get_user_exp", 1);
 	register_native("get_user_lvl", "native_get_user_lvl", 1);
-	register_native("set_user_exp", "native_set_user_exp", 1);
-	register_native("set_user_lvl", "native_set_user_lvl", 1);
 	register_native("get_user_rankname", "native_get_user_rankname", 1);
 	register_native("get_user_bonus", "native_get_user_bonus", 1);
-	register_native("set_user_bonus", "native_set_user_bonus", 1);
 	register_native("get_user_expto", "native_get_user_expto", 1);		// Returns the amount of exp left until new rank
 	register_native("get_map_block","map_block",1);
+    register_native("set_user_exp", "native_set_user_exp", 1);
+	register_native("set_user_lvl", "native_set_user_lvl", 1);
+    register_native("set_user_bonus", "native_set_user_bonus", 1);
 }
 
 public map_block(id){
