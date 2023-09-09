@@ -62,16 +62,29 @@ MENU_TITLE  = \r[\yABS\r]\w Что хотите Take? ^n\dВаши бонусы 
 
 // \r \w \d \y 
 
-MENU_HANDLE_ONE     = Взять \r[AWP]\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_TWO     = Взять \r[AK-47]\w + \yGrenade Pack\w	[%d]
-MENU_HANDLE_THREE   = Взять \r[M4A1]\w + \yGrenade Pack\w	[%d]
+MENU_HANDLE_ONE     = Взять \r[AWP]\w + \yНабор Гранат\w	[%d]
+MENU_HANDLE_TWO     = Взять \r[AK-47]\w + \yНабор Гранат\w	[%d]
+MENU_HANDLE_THREE   = Взять \r[M4A1]\w + \yНабор Гранат\w	[%d]
 MENU_HANDLE_FOUR    = Взять \r[%d$]\w			            [%d]
 MENU_HANDLE_FIVE    = Взять \r[%d]\w ХП		            	[%d]
 MENU_HANDLE_SIX     = Взять \r[%d]\w опыта \y[ABS]\w		[%d]
-MENU_HANDLE_SEVEN   = Взять \rНевидимость [50%]\w	    	[%d]
-MENU_HANDLE_EIGHT   = Взять \rMEGA GRENADE\w		        [%d]
-MENU_HANDLE_NINE    = Взять \rMEGA DEAGLE\w	            	[%d]
+MENU_HANDLE_SEVEN   = Взять \rНевидимость [60%]\w	    	[%d]
+MENU_HANDLE_EIGHT   = Взять \rМега Граната\w		        [%d]
+MENU_HANDLE_NINE    = Взять \rМега Deagle\w	            	[%d]
 MENU_HANDLE_OFF     = \dНедостаточно бонусов
+MENU_NEXT           = Далее
+MENU_PREV           = Назад
+MENU_EXIT           = Выход
+
+ANEW_MENU_GET1       = Вы взяли [AWP + Набор Гранат]
+ANEW_MENU_GET2       = Вы взяли [AK-47 + Набор Гранат]
+ANEW_MENU_GET3       = Вы взяли [M4A1 + Набор Гранат]
+ANEW_MENU_GET4       = Вы взяли [$%d]
+ANEW_MENU_GET5       = Вы взяли [%d Жизней]
+ANEW_MENU_GET6       = Вы взяли [%d Опыта Army Bonus System]
+ANEW_MENU_GET7       = Вы взяли [Невидимость 60%]
+ANEW_MENU_GET8       = Вы взяли [Мега Гранату]
+ANEW_MENU_GET9       = Вы взяли [Мега Deagle]
 
 BLOCKED_MAP_BONUS   = [ABS] Бонусы на этой карте заблокированы!
 BONUS_OFF           = [ABS] Бонусы запрещены сервером.
@@ -155,6 +168,9 @@ MENU_HANDLE_SEVEN   = Take \rInvisibility 50%\w         [%d]
 MENU_HANDLE_EIGHT   = Take \rMEGA GRENADE\w             [%d]
 MENU_HANDLE_NINE    = Take \rMEGA DEAGLE\w              [%d]
 MENU_HANDLE_OFF     = \dNot enough Bonuses
+MENU_NEXT           = Next
+MENU_PREV           = Back
+MENU_EXIT           = Exit
 
 BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are blocked!
 ONLY_ALIVE = [ABS] Only for alive players!

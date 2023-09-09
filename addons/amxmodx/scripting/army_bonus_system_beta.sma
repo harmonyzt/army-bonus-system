@@ -628,9 +628,9 @@ if(round <= get_pcvar_num(ar_round_acc)){
 		menu_additem(menu, Text, "9");
 	}
 	
-    menu_setprop(menu, MPROP_BACKNAME, "ÐÐ°Ð·Ð°Ð´");
-	menu_setprop(menu, MPROP_NEXTNAME, "ÐÐ°Ð»ÐµÐµ");
-	menu_setprop(menu, MPROP_EXITNAME, "ÐÑÑÐ¾Ð´");
+    menu_setprop(menu, MPROP_BACKNAME, "%L", LANG_PLAYER, "MENU_PREV");
+	menu_setprop(menu, MPROP_NEXTNAME, "%L", LANG_PLAYER, "MENU_NEXT");
+	menu_setprop(menu, MPROP_EXITNAME, "%L", LANG_PLAYER, "MENU_EXIT");
 	menu_display(id, menu, 0);
 
 	return PLUGIN_HANDLED;
@@ -648,51 +648,54 @@ public func_anew_menu(id, menu, item)
 	 
 	menu_item_getinfo(menu, item, access, data,5, iName, 63, callback);
 	new key = str_to_num(data);
+    new username[32];
+    get_user_name(id, username, 31);
+
 	switch(key){
 		case 1:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
-				give_item(id,"weapon_awp");
-				give_item(id,"weapon_hegrenade");
-				give_item(id,"weapon_flashbang");
+				give_item(id, "weapon_awp");
+				give_item(id, "weapon_hegrenade");
+				give_item(id, "weapon_flashbang");
 				cs_set_user_bpammo( id, CSW_AWP, 40);
 				set_user_armor(id, 100);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AWP + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET1");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price1]);
 			}
 		}
 		case 2:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
-				give_item(id,"weapon_ak47");
-				give_item(id,"weapon_hegrenade");
-				give_item(id,"weapon_flashbang");
-				give_item(id,"weapon_flashbang");
+				give_item(id, "weapon_ak47");
+				give_item(id, "weapon_hegrenade");
+				give_item(id, "weapon_flashbang");
+				give_item(id, "weapon_flashbang");
 				cs_set_user_bpammo(id, CSW_AK47, 200);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AK-47 + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET2");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price2]);
 			}
 		}
 		case 3:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
-				give_item(id,"weapon_m4a1");
-				give_item(id,"weapon_hegrenade");
-				give_item(id,"weapon_flashbang");
-				give_item(id,"weapon_flashbang");
+				give_item(id, "weapon_m4a1");
+				give_item(id, "weapon_hegrenade");
+				give_item(id, "weapon_flashbang");
+				give_item(id, "weapon_flashbang");
 				cs_set_user_bpammo(id, CSW_M4A1, 200);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [M4A1+ ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET3");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price3]);
 			}
 		}
 		case 4:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
-				cs_set_user_money(id,cs_get_user_money(id) + get_pcvar_num(price_cvar[menu_str1]), 1);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d$]", get_pcvar_num(price_cvar[menu_str1]));
+				cs_set_user_money(id, cs_get_user_money(id) + get_pcvar_num(price_cvar[menu_str1]), 1);
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET4", get_pcvar_num(price_cvar[menu_str1]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price4]);
 			}
 		}
 		case 5:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
-				set_user_health(id,get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]));
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [+%d HP]", get_pcvar_num(price_cvar[menu_str2]));
+				set_user_health(id, get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]));
+				ColorChat(id,TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET5", get_pcvar_num(price_cvar[menu_str2]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price5]);
 			}
 		}
@@ -701,14 +704,15 @@ public func_anew_menu(id, menu, item)
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
 				UserData[id][gExp] += get_pcvar_num(price_cvar[menu_str3]);
 				check_level(id);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Bonus System]", get_pcvar_num(price_cvar[menu_str3]));
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET6", get_pcvar_num(price_cvar[menu_str3]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
 			}
 		}
 		
 		case 7:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
-				set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture,60);
+				set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture, 60);
+                ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET7");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7]);
 			}
 		}
@@ -718,11 +722,11 @@ public func_anew_menu(id, menu, item)
                 if(!user_has_weapon(id, CSW_HEGRENADE))
                     fm_give_item(id, "weapon_hegrenade");
                     players[id] |= (1<<MEGA_GRENADE);
-                    ColorChat(id, TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
+                    ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8");
                     UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
                 } else {
                     players[id] |= (1<<MEGA_GRENADE);
-                    ColorChat(id,TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
+                    ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8");
                     UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
                 }
 		}
@@ -733,7 +737,7 @@ public func_anew_menu(id, menu, item)
 				fm_give_item(id, "weapon_deagle");
 				cs_set_user_bpammo(id, CSW_DEAGLE, 35);
 				players[id] |= (1 << MEGA_DEAGLE);
-				ColorChat(id,TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA DEAGLE");
+				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8")
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price9]);
 			}
 		}
@@ -742,7 +746,7 @@ public func_anew_menu(id, menu, item)
 		return PLUGIN_HANDLED;
 }
 
-DropWeaponSlot( iPlayer, iSlot ){
+DropWeaponSlot(iPlayer, iSlot){
 	static const m_rpgPlayerItems = 367;
 	static const m_pNext = 42; 
 	static const m_iId = 43; 
@@ -822,6 +826,6 @@ public native_get_user_bonus(id){
 
 public native_get_user_rankname(id){
 	static szRankName[64];
-	format(szRankName, charsmax(szRankName), "%L",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+	format(szRankName, charsmax(szRankName), "%L", LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
 	return szRankName;
 }
