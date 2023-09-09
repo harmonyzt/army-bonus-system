@@ -11,7 +11,7 @@
 #include < army_bonus_system >
 
 #pragma tabsize 0;
-#define ver "build-11.1-stable"
+#define ver "build-11.2-stable"
 
 new block = 0;      // For blocking poeple from opening anew menu
 new round;          // Count rounds for anew menu restrictions
@@ -19,22 +19,15 @@ new players_online;
 new players_need;
 new need_kills[33];
 new need_hs[33];
-new players[33];
 new first_blood;
 new gRestrictMaps, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel, gTk, gLostXpTk, gLevelUpmsg
 new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,
-ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, ar_bombplant_exp, ar_def_exp, anew_dmg_deagle, anew_dmg_he;
+ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, ar_bombplant_exp, ar_def_exp;
 new mode_lvlup;
 new bomb_mode;
 new g_iMsgIdBarTime;
 new first_exp;
 new g_vault;
-
-enum _:{
-	NONE,
-	MEGA_DEAGLE,
-	MEGA_GRENADE
-};
 
 enum _:PlData{
 	gId, gExp, gLevel, gTempKey, g_Bonus, Streak, HeadStr
@@ -91,19 +84,15 @@ public plugin_init()
     set_cvar_string("abs", ver);
 	
 	/// Register prices
-	anew_dmg_deagle 	    = register_cvar("anew_dmg_deagle","1.3");
-	anew_dmg_he	            = register_cvar("anew_dmg_he","2.0");
 	price_cvar[price1]		= register_cvar("price_anew_menu1","15");	// AWP price
 	price_cvar[price2]		= register_cvar("price_anew_menu2","15");	// AK47 price
 	price_cvar[price3]		= register_cvar("price_anew_menu3","15");	// M4A1 price
-	price_cvar[price4]		= register_cvar("price_anew_menu4","15");	// %d Money
-	price_cvar[price5]		= register_cvar("price_anew_menu5","5");	// %d Health
-	price_cvar[price6]		= register_cvar("price_anew_menu6","10");	// %d EXP
-	price_cvar[price7]		= register_cvar("price_anew_menu7","10");	// Invisibility
-	price_cvar[price8]		= register_cvar("price_anew_menu8","15");	// MEGA GRENADE
-	price_cvar[price9]		= register_cvar("price_anew_menu9","15");	// MEGA DEAGLE
-	price_cvar[menu_str1]	= register_cvar("anew_menu1","10000");		// How much dollars you get from menu
-	price_cvar[menu_str2]	= register_cvar("anew_menu2","50");			// How much health you get from menu
+	price_cvar[price4]		= register_cvar("price_anew_menu4","15");	// %d $
+	price_cvar[price5]		= register_cvar("price_anew_menu5","10");	// %d HP
+	price_cvar[price6]		= register_cvar("price_anew_menu6","20");	// %d EXP
+	price_cvar[price7]		= register_cvar("price_anew_menu7","15");	// Invisibility
+	price_cvar[menu_str1]	= register_cvar("anew_menu1","10000");		// How much $ you get from menu
+	price_cvar[menu_str2]	= register_cvar("anew_menu2","50");			// How much HP you get from menu
 	price_cvar[menu_str3]	= register_cvar("anew_menu3","50");			// How much exp you get from menu
 
     // Register other plugin CVars
@@ -204,36 +193,6 @@ public bomb_defused(defuser){
 	}
 }
 
-public TakeDamage(victim,idinflictor,idattacker,Float:damage,damagebits){
-	if(!idattacker || idattacker > get_maxplayers())
-		return HAM_IGNORED;
-	
-	if(!players[idattacker])
-		return HAM_IGNORED;
-	
-	if(0 < idinflictor <= get_maxplayers()){
-		new wp = get_user_weapon(idattacker);
-		
-		if(wp == CSW_DEAGLE && (players[idattacker] & (1 << MEGA_DEAGLE)))
-			SetHamParamFloat(4, damage * get_pcvar_float(anew_dmg_deagle));
-		}else{
-		new classname[32];
-		pev(idinflictor, pev_classname, classname,31);
-		
-		if(!strcmp(classname,"grenade") && (players[idattacker] & (1 << MEGA_GRENADE))){
-			set_task(0.5, "deSetNade", idattacker);
-			
-			SetHamParamFloat(4, damage * get_pcvar_float(anew_dmg_he));
-		}
-	}
-	
-	return HAM_IGNORED
-}
-
-public deSetNade(id){
-	players[id] &= ~(1<<MEGA_GRENADE);
-}
-
 public plugin_end(){
 	nvault_close(g_vault);
 }
@@ -254,7 +213,6 @@ public client_disconnect(id){
 	UserData[id][HeadStr] = 0;
 	// This was a possible fix for data being erased. Unused
 	// UserData[id] = UserData[0];
-	players[id] = NONE;
 	save_usr(id);
 }
 
@@ -347,7 +305,6 @@ public EventDeath(){
 		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
 
 		// Remove from victim any streaks and perks
-		players[iVictim] = NONE;
 		UserData[iVictim][Streak] = 0;
 		UserData[iVictim][HeadStr] = 0;
 		need_kills[iVictim] = 5;
@@ -605,22 +562,6 @@ if(round <= get_pcvar_num(ar_round_acc)){
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
 		menu_additem(menu, Text, "7");
 	}
-		
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT", get_pcvar_num(price_cvar[price8]));
-		menu_additem(menu, Text, "8");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "8");
-	}
-		
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE", get_pcvar_num(price_cvar[price9]));
-		menu_additem(menu, Text, "9");
-	} else {
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "9");
-	}
 	
     menu_setprop(menu, MPROP_BACKNAME, "%L", LANG_PLAYER, "MENU_PREV");
 	menu_setprop(menu, MPROP_NEXTNAME, "%L", LANG_PLAYER, "MENU_NEXT");
@@ -710,64 +651,9 @@ public func_anew_menu(id, menu, item)
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7]);
 			}
 		}
-		
-		case 8:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8]) || !user_has_weapon(id, CSW_HEGRENADE)){
-                if(!user_has_weapon(id, CSW_HEGRENADE))
-                    fm_give_item(id, "weapon_hegrenade");
-                    players[id] |= (1<<MEGA_GRENADE);
-                    ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8");
-                    UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
-                } else {
-                    players[id] |= (1<<MEGA_GRENADE);
-                    ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8");
-                    UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
-                }
-		}
-		
-		case 9:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
-				DropWeaponSlot(id, 2);
-				fm_give_item(id, "weapon_deagle");
-				cs_set_user_bpammo(id, CSW_DEAGLE, 35);
-				players[id] |= (1 << MEGA_DEAGLE);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET8")
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price9]);
-			}
-		}
 
 		}
 		return PLUGIN_HANDLED;
-}
-
-DropWeaponSlot(iPlayer, iSlot){
-	static const m_rpgPlayerItems = 367;
-	static const m_pNext = 42; 
-	static const m_iId = 43; 
-	
-	if(!(1 <= iSlot <= 2)){
-		return 0;
-	}
-	
-	new iCount;
-	
-	new iEntity = get_pdata_cbase(iPlayer, (m_rpgPlayerItems + iSlot), 5);
-	if(iEntity > 0)	{
-		new iNext;
-		new szWeaponName[32];
-		
-		do{
-			iNext = get_pdata_cbase(iEntity, m_pNext, 4);
-			
-			if( get_weaponname(get_pdata_int(iEntity, m_iId, 4), szWeaponName, charsmax(szWeaponName )))
-			{
-				engclient_cmd(iPlayer, "drop", szWeaponName);
-				
-				iCount++;
-			}
-		}	while((iEntity = iNext) > 0);
-	}
-	return iCount;
 }
 
 public plugin_precache(){
