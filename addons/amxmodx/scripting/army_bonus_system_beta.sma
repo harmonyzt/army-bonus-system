@@ -89,7 +89,7 @@ public plugin_init()
 {
 	register_plugin("Army Bonus System", ver, "harmony")
 	register_clcmd("say /anew","anew_menu");
-    set_cvar_string("abs",ver);
+    set_cvar_string("abs", ver);
 	
 	/// Register prices
 	anew_dmg_deagle 	    = register_cvar("anew_dmg_deagle","1.3");
@@ -122,15 +122,15 @@ public plugin_init()
 	ar_kill_knife			= register_cvar("ar_kill_exp_knife","3");
 	ar_bonus_knife 			= register_cvar("ar_kill_bonus_knife","3");
 	ar_bonus_newlvl			= register_cvar("ar_bonus_newlvl","8");
-	gRestrictMaps 			= register_cvar( "ar_restrict_maps","1");
-	gFlash					= register_cvar( "ar_flash_nades","0");
-	gSmoke					= register_cvar( "ar_smoke_nades","1");
-	gHe						= register_cvar( "ar_henades","1");
-	gHpbylevel				= register_cvar( "ar_hp_by_level","3");
-	gApbylevel				= register_cvar( "ar_ap_by_level","5");
-	gTk 					= register_cvar( "ar_tk_lose_xp","1");
-	gLostXpTk 				= register_cvar( "ar_tk_lose_val","1");
-	gLevelUpmsg				= register_cvar( "ar_level_up_msg","1");
+	gRestrictMaps 			= register_cvar("ar_restrict_maps","1");
+	gFlash					= register_cvar("ar_flash_nades","0");
+	gSmoke					= register_cvar("ar_smoke_nades","1");
+	gHe						= register_cvar("ar_henades","1");
+	gHpbylevel				= register_cvar("ar_hp_by_level","3");
+	gApbylevel				= register_cvar("ar_ap_by_level","5");
+	gTk 					= register_cvar("ar_tk_lose_xp","1");
+	gLostXpTk 				= register_cvar("ar_tk_lose_val","1");
+	gLevelUpmsg				= register_cvar("ar_level_up_msg","1");
 	mode_lvlup				= register_cvar("ar_lvlup_mode","1");
 	bomb_mode				= register_cvar("ar_bomb_mode","1");
 
@@ -140,7 +140,7 @@ public plugin_init()
 	register_event("HLTV", "on_new_round", "a", "1=0", "2=0");
 	register_message(get_user_msgid("SayText"), "msg_SayText");
 	RegisterHam(Ham_TakeDamage,"player","TakeDamage");
-	set_task(1.0,"Info",_,_,_, "b");
+	set_task(1.0, "Info", _, _, _, "b");
 
 	MaxPlayers = get_maxplayers();
 	g_vault = nvault_open("army_bonus_system");	
@@ -148,13 +148,13 @@ public plugin_init()
 
     if(get_pcvar_num(gRestrictMaps)){
         new szMapName[64];
-        get_mapname(szMapName,63);
+        get_mapname(szMapName, 63);
 
         for(new a = 0; a < sizeof restrict_bonus; a++){
             if(equal(szMapName, restrict_bonus[a])){
                 restr_blocked = true;
                 block = 1;
-                log_amx("[ABS] Bonus menu is blocked on map [%s].",restrict_bonus[a]);
+                log_amx("[ABS] Bonus menu is blocked on map [%s].", restrict_bonus[a]);
                 break;
             }else{
                 restr_blocked = false;
@@ -168,7 +168,7 @@ public plugin_init()
 public plugin_cfg(){
 	new szCfgDir[64], szFile[192];
 	get_configsdir(szCfgDir, charsmax(szCfgDir));
-	formatex(szFile,charsmax(szFile),"%s/abs/army_bonus_sys.cfg",szCfgDir);
+	formatex(szFile, charsmax(szFile), "%s/abs/army_bonus_sys.cfg", szCfgDir);
 	if(file_exists(szFile)){
 		server_cmd("exec %s", szFile);
 	}
@@ -176,7 +176,7 @@ public plugin_cfg(){
 
 public bomb_planting(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 1){
-		client_print(planter,print_center,"%L",LANG_PLAYER,"NO_BOMB_PLANT",get_pcvar_num(players_need));
+		client_print(planter, print_center, "%L", LANG_PLAYER, "NO_BOMB_PLANT", get_pcvar_num(players_need));
 
 		// Fix for planting status being played whe you're not planting a bomb
 		engclient_cmd(planter,"weapon_knife");
@@ -188,20 +188,20 @@ public bomb_planting(planter){
 
 public bomb_planted(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 2) {
-		ColorChat(planter,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));	
+		ColorChat(planter, RED, "%L", LANG_PLAYER, "NOT_ENOUGH_PLAYERS", get_pcvar_num(players_need));	
 		return;					
 	} else {
-		ColorChat(planter,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_PLANT",get_pcvar_num(ar_bombplant_exp));
-		UserData[planter][gExp]+=get_pcvar_num(ar_bombplant_exp);
+		ColorChat(planter, GREEN, "%L", LANG_PLAYER, "SUCC_BOMB_PLANT", get_pcvar_num(ar_bombplant_exp));
+		UserData[planter][gExp] += get_pcvar_num(ar_bombplant_exp);
 	}
 }
 
 public bomb_defused(defuser){
 	if(players_online <= get_pcvar_num(players_need))
 	{
-		ColorChat(defuser,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_PLAYERS",get_pcvar_num(players_need));
+		ColorChat(defuser, RED, "%L", LANG_PLAYER,"NOT_ENOUGH_PLAYERS", get_pcvar_num(players_need));
 	}else{
-		ColorChat(defuser,GREEN,"%L",LANG_PLAYER,"SUCC_BOMB_DEF",get_pcvar_num(ar_def_exp));
+		ColorChat(defuser, GREEN, "%L", LANG_PLAYER, "SUCC_BOMB_DEF", get_pcvar_num(ar_def_exp));
 		UserData[defuser][gExp] += get_pcvar_num(ar_def_exp);
 	}
 }
@@ -217,15 +217,15 @@ public TakeDamage(victim,idinflictor,idattacker,Float:damage,damagebits){
 		new wp = get_user_weapon(idattacker);
 		
 		if(wp == CSW_DEAGLE && (players[idattacker] & (1 << MEGA_DEAGLE)))
-			SetHamParamFloat(4,damage * get_pcvar_float(anew_dmg_deagle));
+			SetHamParamFloat(4, damage * get_pcvar_float(anew_dmg_deagle));
 		}else{
 		new classname[32];
-		pev(idinflictor,pev_classname,classname,31);
+		pev(idinflictor, pev_classname, classname,31);
 		
 		if(!strcmp(classname,"grenade") && (players[idattacker] & (1 << MEGA_GRENADE))){
-			set_task(0.5,"deSetNade",idattacker);
+			set_task(0.5, "deSetNade", idattacker);
 			
-			SetHamParamFloat(4,damage * get_pcvar_float(anew_dmg_he));
+			SetHamParamFloat(4, damage * get_pcvar_float(anew_dmg_he));
 		}
 	}
 	
@@ -251,7 +251,7 @@ public client_putinserver(id){
 }
 
 public client_disconnect(id){
-	players_online--
+	players_online--;
 	UserData[id][Streak] = 0;
 	UserData[id][HeadStr] = 0;
 	// This was a possible fix for data being erased. Unused
@@ -281,27 +281,28 @@ public check_level(id){
             case 1:
             {
                 UserData[id][g_Bonus] += get_pcvar_num(ar_bonus_newlvl);
-                new szName[33], HudSyncObj; HudSyncObj = CreateHudSyncObj();
+                new szName[33], HudSyncObj
+                HudSyncObj = CreateHudSyncObj();
                 get_user_name(id, szName, 32);
                 set_hudmessage(255, 100, 40, -1.0, 0.8, 0, 6.0, 5.0,0.7,0.7);
-                ShowSyncHudMsg(0, HudSyncObj, "%L",LANG_PLAYER,"NEW_LVL_HUD",szName,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-                client_cmd(id,"spk abs/lvl_up");
+                ShowSyncHudMsg(0, HudSyncObj, "%L", LANG_PLAYER, "NEW_LVL_HUD", szName,LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
+                client_cmd(id, "spk abs/lvl_up");
             }
             case 2:
             {
                 UserData[id][g_Bonus] += get_pcvar_num(ar_bonus_newlvl);
                 new szName[33];
                 get_user_name(id, szName, 32);
-                static buffer[192],len;
-                len = format(buffer, charsmax(buffer), "^4[^3%L^4]^1 %L ^4%s^1",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"PLAYER",szName);
-                len += format(buffer[len], charsmax(buffer) - len, " %L",LANG_PLAYER,"NEW_LEVEL"); 
-                len += format(buffer[len], charsmax(buffer) - len, " ^4%L^1. ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-                len += format(buffer[len], charsmax(buffer) - len, "%L",LANG_PLAYER,"CONTR");
+                static buffer[192], len;
+                len = format(buffer, charsmax(buffer), "^4[^3%L^4]^1 %L ^4%s^1", LANG_PLAYER, "PRIFIX", LANG_PLAYER, "PLAYER", szName);
+                len += format(buffer[len], charsmax(buffer) - len, " %L", LANG_PLAYER, "NEW_LEVEL"); 
+                len += format(buffer[len], charsmax(buffer) - len, " ^4%L^1. ", LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
+                len += format(buffer[len], charsmax(buffer) - len, "%L", LANG_PLAYER, "CONTR");
 
                 if(get_pcvar_num(gLevelUpmsg) == 1){
-                    ColorChat(0,NORMAL,buffer);
+                    ColorChat(0, NORMAL, buffer);
                 } else {
-                    ColorChat(id,NORMAL,buffer);
+                    ColorChat(id, NORMAL, buffer);
                 }
             }
 		}
@@ -317,16 +318,16 @@ public EventDeath(){
 	
 	iVictim = read_data(2);
 	head = read_data(3);
-	read_data(4,wpn,31);
+	read_data(4, wpn, 31);
 	
 	if(iKiller != iVictim && is_user_connected(iKiller) && is_user_connected(iVictim) && UserData[iKiller][gLevel] <= 29)	
 	{
 		// First Blood
 		if(first_blood == 1 && get_pcvar_num(first_exp) != 0){
 			new name[33];
-			get_user_name(iKiller,name,32);
+			get_user_name(iKiller, name, 32);
 			UserData[iKiller][gExp] += get_pcvar_num(first_exp);
-			client_print(0,print_center,"%L",LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
+			client_print(0, print_center, "%L", LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
 			first_blood = 0;
 			return PLUGIN_HANDLED;
 		}
@@ -342,7 +343,7 @@ public EventDeath(){
 		}
 
 		// Remove invisibility if player has it
-		set_user_rendering(iVictim,kRenderFxNone,255,255,255, kRenderNormal,16);
+		set_user_rendering(iVictim,kRenderFxNone, 255, 255, 255, kRenderNormal, 16);
 
 		UserData[iKiller][Streak]++
 		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
@@ -358,16 +359,16 @@ public EventDeath(){
 			ColorChat(iVictim,RED,"%L",LANG_PLAYER,"DEATH_NOTICE");
 	
 		// KILLSTERAK
-		if(UserData[iKiller][Streak]>=need_kills[iKiller]){
-			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak);
-			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK",need_kills[iKiller],get_pcvar_num(ar_bonus_streak));
+		if(UserData[iKiller][Streak] >= need_kills[iKiller]){
+			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak);
+			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "STREAK", need_kills[iKiller], get_pcvar_num(ar_bonus_streak));
 			need_kills[iKiller] += 5;
 		}
 		
 		// HEADSTREAK
 		if(UserData[iKiller][HeadStr] >= need_hs[iKiller]){
-			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak_head);
-			ColorChat(iKiller,GREEN,"%L",LANG_PLAYER,"STREAK_HS",need_hs[iKiller],get_pcvar_num(ar_bonus_streak_head));
+			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak_head);
+			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER,"STREAK_HS", need_hs[iKiller], get_pcvar_num(ar_bonus_streak_head));
 			need_hs[iKiller] += 4;
 		}
 		
@@ -375,7 +376,7 @@ public EventDeath(){
 		if(contain(wpn, "knife") != -1){
 			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_knife);
 			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
-			ColorChat(iKiller, GREEN,"%L",LANG_PLAYER,"KNIFE_KILL",get_pcvar_num(ar_bonus_knife));
+			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "KNIFE_KILL", get_pcvar_num(ar_bonus_knife));
 		}
 
 		check_level(iKiller);
@@ -405,10 +406,10 @@ public EventRoundStart(){
 					give_item(id,"weapon_hegrenade");
 			
 				if(get_pcvar_num(gHpbylevel) != 0)
-					set_user_health(id,get_user_health(id)+get_pcvar_num(gHpbylevel)*UserData[id][gLevel]);
+					set_user_health(id,get_user_health(id) + get_pcvar_num(gHpbylevel) * UserData[id][gLevel]);
 				
 				if(get_pcvar_num(gApbylevel) != 0)
-					set_user_armor(id,get_user_armor(id)+get_pcvar_num(gApbylevel)*UserData[id][gLevel]);	
+					set_user_armor(id,get_user_armor(id) + get_pcvar_num(gApbylevel) * UserData[id][gLevel]);	
 				
 				if(levelUp[id] == 1)
 					levelUp[id] = 0;
@@ -437,11 +438,11 @@ public load_data(id){
 
 public next_load_data(id,data[],len){
 	new szName[33];
-    new exp[10],level[10],bonus[10],rank[10];
+    new exp[10], level[10], bonus[10], rank[10];
 
 	get_user_name(id,szName,32);
 	replace_all(data,len,"|"," ");
-	parse(data,exp,9,level,9,bonus,9,rank,9);
+	parse(data, exp, 9, level, 9, bonus, 9, rank, 9);
 
 	UserData[id][gExp]= str_to_num(exp);
 	UserData[id][gLevel]= str_to_num(level);
@@ -485,7 +486,7 @@ public client_infochanged(id){
 		
 	if(!equali(newname, oldname))
 	{
-		set_user_info(id,"name",oldname);
+		set_user_info(id, "name", oldname);
 		log_amx("[ABS] Name change blocked.");
 
 		return PLUGIN_HANDLED;
@@ -512,16 +513,16 @@ public Info(){
 			len = format(buffer, charsmax(buffer), "%L", LANG_PLAYER,"FULL_INFO", name, LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
 
 				if(UserData[id][gLevel] <= 19){
-					len += format(buffer[len], charsmax(buffer) - len, "^n%L",LANG_PLAYER,"PL_XP",UserData[id][gExp],gLevels[UserData[id][gLevel]]);
+					len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_XP", UserData[id][gExp],gLevels[UserData[id][gLevel]]);
 				}else{
-					len += format(buffer[len], charsmax(buffer) - len, "^n%L",LANG_PLAYER,"PL_MAX");
+					len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_MAX");
 				}
 
 			set_dhudmessage(100, 100, 100, 0.01, 0.16, 0, 1.0, 1.0, _, _, _);
-			show_dhudmessage(id,"%s", buffer);
+			show_dhudmessage(id, "%s", buffer);
 
 			set_dhudmessage(100, 100, 100,-1.0,0.90, 0, 1.0, 1.0);
-			show_dhudmessage(id,"%L",LANG_PLAYER,"ANEW_INFO", UserData[id][g_Bonus]);
+			show_dhudmessage(id, "%L", LANG_PLAYER, "ANEW_INFO", UserData[id][g_Bonus]);
 		}
 	}
 	return PLUGIN_CONTINUE;
@@ -529,7 +530,7 @@ public Info(){
 
 // Anew Menu
 public anew_menu(id){
-	
+
 if(get_pcvar_num(ar_bonus_on) == 0){
 	ColorChat(id,RED,"%L",LANG_PLAYER,"BONUS_OFF");
 	return PLUGIN_HANDLED;
@@ -552,11 +553,11 @@ if(round <= get_pcvar_num(ar_round_acc)){
 
 	static s_menu_it[700];
 	new Text[1024];
-	format(s_menu_it, charsmax(s_menu_it), "%L",LANG_PLAYER,"MENU_TITLE",UserData[id][g_Bonus]);
+	format(s_menu_it, charsmax(s_menu_it), "%L", LANG_PLAYER, "MENU_TITLE", UserData[id][g_Bonus]);
 	new menu = menu_create(s_menu_it, "func_anew_menu");
 
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE",get_pcvar_num(price_cvar[price1]));
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE", get_pcvar_num(price_cvar[price1]));
 		menu_additem(menu, Text,"1");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
@@ -564,7 +565,7 @@ if(round <= get_pcvar_num(ar_round_acc)){
 	}
 
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO",get_pcvar_num(price_cvar[price2]));
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO", get_pcvar_num(price_cvar[price2]));
 		menu_additem(menu, Text,"2");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
@@ -572,65 +573,65 @@ if(round <= get_pcvar_num(ar_round_acc)){
 	}
 
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE",get_pcvar_num(price_cvar[price3]));
-		menu_additem(menu, Text,"3");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE", get_pcvar_num(price_cvar[price3]));
+		menu_additem(menu, Text, "3");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text,"3");
+		menu_additem(menu, Text, "3");
 	}
 
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR",get_pcvar_num(price_cvar[menu_str1]),get_pcvar_num(price_cvar[price4]));
-		menu_additem(menu,Text,"4");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR", get_pcvar_num(price_cvar[menu_str1]), get_pcvar_num(price_cvar[price4]));
+		menu_additem(menu, Text, "4");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"4");
+		menu_additem(menu, Text, "4");
 	}
 
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE",get_pcvar_num(price_cvar[menu_str2]),get_pcvar_num(price_cvar[5]));
-		menu_additem(menu,Text,"5");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE", get_pcvar_num(price_cvar[menu_str2]), get_pcvar_num(price_cvar[5]));
+		menu_additem(menu, Text, "5");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"5");
+		menu_additem(menu, Text, "5");
 	}
 		
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX",get_pcvar_num(price_cvar[menu_str3]),get_pcvar_num(price_cvar[price6]));
-		menu_additem(menu,Text,"6");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX", get_pcvar_num(price_cvar[menu_str3]), get_pcvar_num(price_cvar[price6]));
+		menu_additem(menu, Text, "6");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"6");
+		menu_additem(menu, Text, "6");
 	}
 		
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN",get_pcvar_num(price_cvar[price7]));
-		menu_additem(menu,Text,"7");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN", get_pcvar_num(price_cvar[price7]));
+		menu_additem(menu, Text, "7");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"7");
+		menu_additem(menu, Text, "7");
 	}
 		
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT",get_pcvar_num(price_cvar[price8]));
-		menu_additem(menu,Text,"8");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_EIGHT", get_pcvar_num(price_cvar[price8]));
+		menu_additem(menu, Text, "8");
 	}else{
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"8");
+		menu_additem(menu, Text, "8");
 	}
 		
 	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE",get_pcvar_num(price_cvar[price9]));
-		menu_additem(menu,Text,"9");
+		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_NINE", get_pcvar_num(price_cvar[price9]));
+		menu_additem(menu, Text, "9");
 	} else {
 		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu,Text,"9");
+		menu_additem(menu, Text, "9");
 	}
 	
     menu_setprop(menu, MPROP_BACKNAME, "ÐÐ°Ð·Ð°Ð´");
 	menu_setprop(menu, MPROP_NEXTNAME, "ÐÐ°Ð»ÐµÐµ");
 	menu_setprop(menu, MPROP_EXITNAME, "ÐÑÑÐ¾Ð´");
-	menu_display(id,menu,0);
+	menu_display(id, menu, 0);
 
 	return PLUGIN_HANDLED;
 }
@@ -638,14 +639,14 @@ if(round <= get_pcvar_num(ar_round_acc)){
 public func_anew_menu(id, menu, item)
 {
 	if(item == MENU_EXIT){
-	menu_destroy( menu );
+	menu_destroy(menu);
 	return PLUGIN_HANDLED;
 	}
 
 	new data[6], iName[64];
 	new access, callback;
 	 
-	menu_item_getinfo( menu, item, access, data,5, iName, 63, callback );
+	menu_item_getinfo(menu, item, access, data,5, iName, 63, callback);
 	new key = str_to_num(data);
 	switch(key){
 		case 1:{
@@ -700,7 +701,7 @@ public func_anew_menu(id, menu, item)
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
 				UserData[id][gExp] += get_pcvar_num(price_cvar[menu_str3]);
 				check_level(id);
-				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Ranks]", get_pcvar_num(price_cvar[menu_str3]));
+				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Bonus System]", get_pcvar_num(price_cvar[menu_str3]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
 			}
 		}
