@@ -53,8 +53,6 @@ KNIFE_KILL  = [ABS] Браво! Вы награждены %d бонусами.
 SUCC_BOMB_DEF   = [ABS] За разминирование бомбы вы получаете %d опыта
 SUCC_BOMB_PLANT = [ABS] За закладку бомбы вы получаете %d опыта
 
-DEATH_NOTICE    = [ABS] Ваш счетчик убийств обнулён.
-
 STREAK      = [ABS] За серию из %d убийств, вы награждены %d бонусами
 STREAK_HS   = [ABS] За серию из %d убийств в голову, вы награждены %d бонусами
 
@@ -148,8 +146,6 @@ KNIFE_KILL = [ABS] Perfect! You are rewarded with %d bonuses
 
 SUCC_BOMB_DEF = [ABS] You recieved %d exp for defusing a bomb
 SUCC_BOMB_PLANT = [ABS] You recieved %d exp for planting a bomb
-
-DEATH_NOTICE = [ABS] Your kill counter has been reset.
 
 STREAK = [ABS] For a streak of %d kills, you are rewarded with %d bonuses
 STREAK_HS = [ABS] For a streak of %d kills in head, you are rewarded with %d bonuses

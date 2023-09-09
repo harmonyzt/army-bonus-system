@@ -8,10 +8,10 @@
 #include < csx >
 #include < fakemeta_util >
 #include < hamsandwich >
-#include < army_bonus >
+#include < army_bonus_system >
 
 #pragma tabsize 0;
-#define ver "build-11-stable"
+#define ver "build-11.1-stable"
 
 new block = 0;      // For blocking poeple from opening anew menu
 new round;          // Count rounds for anew menu restrictions
@@ -23,8 +23,7 @@ new players[33];
 new first_blood;
 new gRestrictMaps, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel, gTk, gLostXpTk, gLevelUpmsg
 new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,
-ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, 
-ar_death_notice, ar_bombplant_exp, ar_def_exp, anew_dmg_deagle, anew_dmg_he;
+ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, ar_bombplant_exp, ar_def_exp, anew_dmg_deagle, anew_dmg_he;
 new mode_lvlup;
 new bomb_mode;
 new g_iMsgIdBarTime;
@@ -113,7 +112,6 @@ public plugin_init()
 	ar_bombplant_exp 		= register_cvar("ar_bombplant_exp","3");
 	players_need 			= register_cvar("ar_players_need","5");
 	ar_bonus_on 			= register_cvar("ar_bonus_on","1");
-	ar_death_notice 		= register_cvar("ar_death_notice","0");
 	ar_bonus_streak_head 	= register_cvar("ar_bonus_streak_head","2");
 	ar_round_acc 			= register_cvar("ar_round_acc","1");
 	ar_bonus_streak 		= register_cvar("ar_bonus_streak","2");
@@ -168,7 +166,7 @@ public plugin_init()
 public plugin_cfg(){
 	new szCfgDir[64], szFile[192];
 	get_configsdir(szCfgDir, charsmax(szCfgDir));
-	formatex(szFile, charsmax(szFile), "%s/abs/army_bonus_sys.cfg", szCfgDir);
+	formatex(szFile, charsmax(szFile), "%s/abs/army_bonus_system.cfg", szCfgDir);
 	if(file_exists(szFile)){
 		server_cmd("exec %s", szFile);
 	}
@@ -354,9 +352,6 @@ public EventDeath(){
 		UserData[iVictim][HeadStr] = 0;
 		need_kills[iVictim] = 5;
 		need_hs[iVictim] = 3;
-		
-		if(get_pcvar_num(ar_death_notice) == 1)
-			ColorChat(iVictim,RED,"%L",LANG_PLAYER,"DEATH_NOTICE");
 	
 		// KILLSTERAK
 		if(UserData[iKiller][Streak] >= need_kills[iKiller]){
@@ -391,8 +386,7 @@ public EventRoundStart(){
 	for(new id = 1; id <= MaxPlayers; id++)
 	{
 		save_usr(id);
-			if(is_user_alive(id) && is_user_connected(id))
-			{
+			if(is_user_alive(id) && is_user_connected(id)){
 				if(restr_blocked)
 					return PLUGIN_CONTINUE;
 			
@@ -639,8 +633,8 @@ if(round <= get_pcvar_num(ar_round_acc)){
 public func_anew_menu(id, menu, item)
 {
 	if(item == MENU_EXIT){
-	menu_destroy(menu);
-	return PLUGIN_HANDLED;
+	    menu_destroy(menu);
+	    return PLUGIN_HANDLED;
 	}
 
 	new data[6], iName[64];
