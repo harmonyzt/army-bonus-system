@@ -14,13 +14,22 @@
 #define ver "build-11-stable"
 
 new block = 0;      // For blocking poeple from opening anew menu
-new round;          // Round counter TODO: Remove
+new round;          // Count rounds for anew menu restrictions
 new players_online;
 new players_need;
 new need_kills[33];
 new need_hs[33];
 new players[33];
 new first_blood;
+new gRestrictMaps, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel, gTk, gLostXpTk, gLevelUpmsg
+new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,
+ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, 
+ar_death_notice, ar_bombplant_exp, ar_def_exp, anew_dmg_deagle, anew_dmg_he;
+new mode_lvlup;
+new bomb_mode;
+new g_iMsgIdBarTime;
+new first_exp;
+new g_vault;
 
 enum _:{
 	NONE,
@@ -28,20 +37,11 @@ enum _:{
 	MEGA_GRENADE
 };
 
-new const restrict_bonus[][] =
-{
-	"fy_pool_day",
-	"fy_snow"
+enum _:PlData{
+	gId, gExp, gLevel, gTempKey, g_Bonus, Streak, HeadStr
 };
 
-new g_vault;
-enum _:PlData
-{
-	gId,gExp,gLevel,gTempKey,g_Bonus,Streak,HeadStr
-};
-
-enum _:Cvars
-{
+enum _:Cvars{
 	price1,
 	price2,
 	price3,
@@ -57,12 +57,15 @@ enum _:Cvars
 };
 
 new price_cvar[Cvars];
-new gChatTop;
-new stats[8], bodyhits[8], irank;
 new UserData[50][PlData];
-new gMessage[256];
-new MaxPlayers,levelUp[33],gSayText;
+new MaxPlayers, levelUp[33];
 new bool:restr_blocked;
+
+new const restrict_bonus[][] =
+{
+	"fy_pool_day",
+	"fy_snow"
+};
 
 new const gRankNames[][] = 
 {
@@ -82,24 +85,11 @@ new const gNades[][] =
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1}
 };
 
-new gRestrictMaps, gAdminGMsg, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel,
-gArmyChat, gSlash, gTk, gLostXpTk, gLevelUpmsg, gAllChat
-new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,  ar_round_acc
-,ar_bonus_on,ar_bonus_streak,ar_bonus_streak_head,ar_death_notice,ar_bombplant_exp, ar_def_exp,ar_round_msgs
-,anew_dmg_deagle,anew_dmg_he;
-new mode_lvlup;
-new bomb_mode;
-new g_iMsgIdBarTime;
-new first_exp;
-
 public plugin_init()
 {
 	register_plugin("Army Bonus System", ver, "harmony")
 	register_clcmd("say /anew","anew_menu");
     set_cvar_string("abs",ver);
-    
-	register_event("SendAudio", "t_win", "a", "2&%!MRAD_terwin");
-	register_event("SendAudio", "ct_win", "a", "2&%!MRAD_ctwin");
 	
 	/// Register prices
 	anew_dmg_deagle 	    = register_cvar("anew_dmg_deagle","1.3");
@@ -122,7 +112,6 @@ public plugin_init()
 	ar_def_exp 				= register_cvar("ar_def_exp","3");
 	ar_bombplant_exp 		= register_cvar("ar_bombplant_exp","3");
 	players_need 			= register_cvar("ar_players_need","5");
-	ar_round_msgs 			= register_cvar("ar_round_msgs","0");
 	ar_bonus_on 			= register_cvar("ar_bonus_on","1");
 	ar_death_notice 		= register_cvar("ar_death_notice","0");
 	ar_bonus_streak_head 	= register_cvar("ar_bonus_streak_head","2");
@@ -139,14 +128,9 @@ public plugin_init()
 	gHe						= register_cvar( "ar_henades","1");
 	gHpbylevel				= register_cvar( "ar_hp_by_level","3");
 	gApbylevel				= register_cvar( "ar_ap_by_level","5");
-	gChatTop				= register_cvar( "ar_chat_top","1");
-	gArmyChat				= register_cvar( "ar_chat","1");
-	gAdminGMsg				= register_cvar( "ar_admin_color","1");
-	gSlash 					= register_cvar( "ar_slash_messages","1");
 	gTk 					= register_cvar( "ar_tk_lose_xp","1");
 	gLostXpTk 				= register_cvar( "ar_tk_lose_val","1");
 	gLevelUpmsg				= register_cvar( "ar_level_up_msg","1");
-	gAllChat				= register_cvar( "ar_all_chat","1");	
 	mode_lvlup				= register_cvar("ar_lvlup_mode","1");
 	bomb_mode				= register_cvar("ar_bomb_mode","1");
 
@@ -158,15 +142,9 @@ public plugin_init()
 	RegisterHam(Ham_TakeDamage,"player","TakeDamage");
 	set_task(1.0,"Info",_,_,_, "b");
 
-	gSayText = get_user_msgid ("SayText");
 	MaxPlayers = get_maxplayers();
 	g_vault = nvault_open("army_bonus_system");	
 	g_iMsgIdBarTime = get_user_msgid("BarTime");
-
-	if(get_pcvar_num(gArmyChat)){
-		register_clcmd("say", "hookSay");
-		register_clcmd("say_team", "hookSayTeam");
-	}
 
     if(get_pcvar_num(gRestrictMaps)){
         new szMapName[64];
@@ -200,7 +178,7 @@ public bomb_planting(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 1){
 		client_print(planter,print_center,"%L",LANG_PLAYER,"NO_BOMB_PLANT",get_pcvar_num(players_need));
 
-		// Fix for a planting status being played even if you're not planting a bomb
+		// Fix for planting status being played whe you're not planting a bomb
 		engclient_cmd(planter,"weapon_knife");
 		message_begin(MSG_ONE, g_iMsgIdBarTime, _, planter);
 		write_short(0);
@@ -258,22 +236,6 @@ public deSetNade(id){
 	players[id] &= ~(1<<MEGA_GRENADE);
 }
 
-public t_win(id){
-	if(get_pcvar_num(ar_round_msgs)==1)
-	{
-		set_dhudmessage(255, 0, 0, -1.0, 0.2, 0, 1.0, 7.0, 0.4, 0.4, _);
-		show_dhudmessage(0,"%L",LANG_PLAYER,"TT_WIN");
-	}
-}
-
-public ct_win(id){
-	if(get_pcvar_num(ar_round_msgs)==1)
-	{
-		set_dhudmessage(0, 0, 255, -1.0, 0.2, 0, 1.0, 7.0, 0.5, 0.5, _);
-		show_dhudmessage(0,"%L",LANG_PLAYER,"CT_WIN");
-	}
-}
-
 public plugin_end(){
 	nvault_close(g_vault);
 }
@@ -298,7 +260,7 @@ public client_disconnect(id){
 	save_usr(id);
 }
 
-public on_new_round(id){	
+public on_new_round(id){
 	round++
 	first_blood = 1
 }
@@ -316,53 +278,46 @@ public check_level(id){
 		levelUp[id] = 1;
 		
 		switch(get_pcvar_num(mode_lvlup)){
-		case 1:
-		{
-			new szName[33],mess;mess=CreateHudSyncObj()
-			get_user_name(id, szName, 32);
-			set_hudmessage(255, 100, 40, -1.0, 0.8, 0, 6.0, 5.0,0.7,0.7)
-			ShowSyncHudMsg(0, mess, "%L",LANG_PLAYER,"NEW_LVL_HUD",szName,LANG_PLAYER,gRankNames[UserData[id][gLevel]])
-			client_cmd(id,"spk abs/lvl_up")
-		}
-		case 2:
-		{
-			if(get_pcvar_num(gLevelUpmsg) == 1){
-				new szName[33];
-				get_user_name(id, szName, 32);
-				UserData[id][g_Bonus]+=get_pcvar_num(ar_bonus_newlvl)
-				static buffer[192],len;
-				len = format(buffer, charsmax(buffer), "^4[^3%L^4]^1 %L ^4%s^1",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"PLAYER",szName);
-				len += format(buffer[len], charsmax(buffer) - len, " %L",LANG_PLAYER,"NEW_LEVEL"); 
-				len += format(buffer[len], charsmax(buffer) - len, " ^4%L^1. ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-				len += format(buffer[len], charsmax(buffer) - len, "%L",LANG_PLAYER,"CONTR");
-				ColorChat(0,NORMAL,buffer);
-				
-			} else {
-				new szName[33];
-				get_user_name(id, szName, 32);
-				UserData[id][g_Bonus]+=get_pcvar_num(ar_bonus_newlvl)
-				static buffer[192],len;
-				len = format(buffer, charsmax(buffer), "^4[^3%L^4]^1 %L ^4%s^1",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"PLAYER",szName);
-				len += format(buffer[len], charsmax(buffer) - len, " %L",LANG_PLAYER,"NEW_LEVEL"); 
-				len += format(buffer[len], charsmax(buffer) - len, " ^4%L^1. ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-				len += format(buffer[len], charsmax(buffer) - len, "%L",LANG_PLAYER,"CONTR");
-				ColorChat(id,NORMAL,buffer);
-			}
-		}
+            case 1:
+            {
+                UserData[id][g_Bonus] += get_pcvar_num(ar_bonus_newlvl);
+                new szName[33], HudSyncObj; HudSyncObj = CreateHudSyncObj();
+                get_user_name(id, szName, 32);
+                set_hudmessage(255, 100, 40, -1.0, 0.8, 0, 6.0, 5.0,0.7,0.7);
+                ShowSyncHudMsg(0, HudSyncObj, "%L",LANG_PLAYER,"NEW_LVL_HUD",szName,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+                client_cmd(id,"spk abs/lvl_up");
+            }
+            case 2:
+            {
+                UserData[id][g_Bonus] += get_pcvar_num(ar_bonus_newlvl);
+                new szName[33];
+                get_user_name(id, szName, 32);
+                static buffer[192],len;
+                len = format(buffer, charsmax(buffer), "^4[^3%L^4]^1 %L ^4%s^1",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"PLAYER",szName);
+                len += format(buffer[len], charsmax(buffer) - len, " %L",LANG_PLAYER,"NEW_LEVEL"); 
+                len += format(buffer[len], charsmax(buffer) - len, " ^4%L^1. ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
+                len += format(buffer[len], charsmax(buffer) - len, "%L",LANG_PLAYER,"CONTR");
+
+                if(get_pcvar_num(gLevelUpmsg) == 1){
+                    ColorChat(0,NORMAL,buffer);
+                } else {
+                    ColorChat(id,NORMAL,buffer);
+                }
+            }
 		}
 	}
 }
 
 public EventDeath(){
-	static iKiller,iVictim,head,wpn[32]
+	static iKiller, iVictim, head, wpn[32];
 	iKiller = read_data(1);
 
-	if(!is_user_connected(iKiller))	// Fixed [Player out of range (0)]
+	if(!is_user_connected(iKiller))	// [Player out of range (0)]
 		return PLUGIN_HANDLED
 	
 	iVictim = read_data(2);
 	head = read_data(3);
-	read_data(4,wpn,31)
+	read_data(4,wpn,31);
 	
 	if(iKiller != iVictim && is_user_connected(iKiller) && is_user_connected(iVictim) && UserData[iKiller][gLevel] <= 29)	
 	{
@@ -379,7 +334,6 @@ public EventDeath(){
 		// Teamkill
 		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim))
 			UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
-
 
 		// Headshot
 		if(head){
@@ -410,7 +364,6 @@ public EventDeath(){
 			need_kills[iKiller] += 5;
 		}
 		
-		
 		// HEADSTREAK
 		if(UserData[iKiller][HeadStr] >= need_hs[iKiller]){
 			UserData[iKiller][g_Bonus]+=get_pcvar_num(ar_bonus_streak_head);
@@ -424,7 +377,11 @@ public EventDeath(){
 			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
 			ColorChat(iKiller, GREEN,"%L",LANG_PLAYER,"KNIFE_KILL",get_pcvar_num(ar_bonus_knife));
 		}
+
 		check_level(iKiller);
+
+        save_usr(iKiller);
+        save_usr(iVictim);
 	}
 	return PLUGIN_CONTINUE;
 }
@@ -461,7 +418,7 @@ public EventRoundStart(){
 }
 
 ///
-///		SAVE & LOAD DATA
+///		Nvault Handling
 ///
 
 public load_data(id){
@@ -499,9 +456,8 @@ public next_load_data(id,data[],len){
 
 public register_player(id,data[]){
 	new szName[33];
-	get_user_name(id,szName,32);
+	get_user_name(id, szName, 32);
 	
-	// Set everything to 0 for a new player
 	UserData[id][gExp] = 0
 	UserData[id][gLevel] = 1;
 	UserData[id][g_Bonus] = 0
@@ -511,222 +467,11 @@ public register_player(id,data[]){
 
 public save_usr(id){
 	new szName[33];
-	get_user_name(id,szName,32);
+	get_user_name(id, szName, 32);
 
 	static data[256];
-	formatex(data, 255, "|%i|%i|%i|", UserData[id][gExp],UserData[id][gLevel],UserData[id][g_Bonus]);
+	formatex(data, 255, "|%i|%i|%i|", UserData[id][gExp], UserData[id][gLevel], UserData[id][g_Bonus]);
 	nvault_set(g_vault, szName, data);
-}
-
-public hookSay(id){
-	if(!is_user_connected(id))
-		return PLUGIN_CONTINUE;
-
-	new message[192],Len;
-	read_args(message, 191);
-	remove_quotes(message);
-	if(is_admin_msg(message))
-		return PLUGIN_CONTINUE;
-	
-	if(is_empty_message(message)){
-		ColorChat(id,NORMAL,"^4[^3%L^4]^1 %L",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"EMPTY_MSG")
-		return PLUGIN_HANDLED
-	}
-	if(get_pcvar_num(gSlash)){
-		if(is_has_slash(message))
-			return PLUGIN_HANDLED_MAIN
-	}
-	
-	new szName[32];
-	get_user_name(id,szName,31);
-	irank = get_user_stats(id,stats,bodyhits)
-	if(is_user_admin(id)){
-		if(get_pcvar_num(gChatTop) == 0){
-			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-		} else {
-			if(get_pcvar_num(gChatTop) == 1)
-			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-		}
-
-		switch(get_pcvar_num(gAdminGMsg))
-		{
-			case 1:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "%s",message);
-			}
-			case 2:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s",message);
-			}
-			default:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
-			}
-		}
-		Chat(id,0,get_pcvar_num(gAllChat));
-	} else {
-		if(get_pcvar_num(gChatTop) == 0){
-			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3%L^4] ",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-		}else if(get_pcvar_num(gChatTop) == 1){
-			Len = format(gMessage[Len], charsmax(gMessage) - 1, "^4[^3Ð Ð°Ð½Ð³ : %d^4][^3%L^4] ",irank,LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-		}
-		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
-		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
-		Chat(id,0,get_pcvar_num(gAllChat));
-	}
-	return PLUGIN_HANDLED_MAIN
-}
-
-public hookSayTeam(id)
-{
-	if(!is_user_connected(id))
-		return PLUGIN_CONTINUE;
-
-	new message[192],Len;
-	read_args(message, 191);
-	remove_quotes(message);
-		if(is_admin_msg(message))
-			return PLUGIN_CONTINUE;
-		
-	if(is_empty_message(message)){
-		ColorChat(id,GREY,"^4[^3%L^4]^1 %L",LANG_PLAYER,"PRIFIX",LANG_PLAYER,"EMPTY_MSG");
-		return PLUGIN_HANDLED
-	}
-	
-	if(get_pcvar_num(gSlash)){
-		if(is_has_slash(message))
-			return PLUGIN_HANDLED_MAIN
-	}
-
-	new szName[32];
-	get_user_name(id,szName,31);
-	if(is_user_admin(id))
-	{
-		Len = format(gMessage[Len], charsmax(gMessage) - 1, "^3%L^1 ^4[^3%L^4] ^3%s^4 : ",LANG_PLAYER,"SEND_TEAM",LANG_PLAYER,gRankNames[UserData[id][gLevel]],szName);		
-		switch(get_pcvar_num(gAdminGMsg))
-		{
-			case 1:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "%s",message);
-			}
-			case 2:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s",message);
-			}
-			default:
-			{
-				Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
-			}
-		}
-		Chat(id,1,get_pcvar_num(gAllChat));
-	}
-	else 
-	{
-		Len = format(gMessage[Len], charsmax(gMessage) - 1, "^3%L^1 ^4[^3%L^4] ",LANG_PLAYER,"SEND_TEAM",LANG_PLAYER,gRankNames[UserData[id][gLevel]]);
-		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^3%s^4 : ",szName);
-		Len += format(gMessage[Len], charsmax(gMessage) - 1, "^1%s",message);
-		Chat(id,1,get_pcvar_num(gAllChat));
-	}
-	return PLUGIN_HANDLED_MAIN
-}
-
-stock is_admin_msg(const Message[]){
-	if(Message[0] == '@')
-		return true;
-		
-	return false;
-}
-
-stock is_empty_message(const Message[]){
-	if(equal(Message, "") || !strlen(Message))
-		return true;
-		
-	return false;
-}
-
-stock Chat(id,team,chat_type){
-	if(team)
-	{
-		if(chat_type)
-		{
-			for(new i = 1; i <= MaxPlayers; i++)
-			{
-				if(!is_user_connected(i))
-					continue
-			
-				if(get_user_team(id) == get_user_team(i))
-					send_message(gMessage, id, i);
-			}
-		} else {
-			if(is_user_alive(id))
-			{
-				for(new i = 1; i <= MaxPlayers; i++)
-				{
-					if(!is_user_connected(i) || !is_user_alive(i))
-						continue
-				
-					if(get_user_team(id) == get_user_team(i))
-						send_message(gMessage, id, i);
-				}
-			} else if(!is_user_alive(id)){
-				for(new i = 1; i <= MaxPlayers; i++)
-				{
-					if(!is_user_connected(i) || is_user_alive(i))
-						continue
-				
-					if(get_user_team(id) == get_user_team(i))
-						send_message(gMessage, id, i);
-				}
-			}
-		}
-	} else{
-		if(chat_type)
-		{
-			for(new i = 1; i <= MaxPlayers; i++)
-			{
-				if(!is_user_connected(i))
-					continue
-			
-				send_message(gMessage, id, i);
-			}
-		} else {
-			if(is_user_alive(id))
-			{
-				for(new i = 1; i <= MaxPlayers; i++)
-				{
-					if(!is_user_connected(i) || !is_user_alive(i))
-						continue
-				
-					send_message(gMessage, id, i);
-				}
-			} else if(!is_user_alive(id)){
-				for(new i = 1; i <= MaxPlayers; i++)
-				{
-					if(!is_user_connected(i) || is_user_alive(i))
-						continue
-				
-					send_message(gMessage, id, i);
-				}
-			}
-		}
-	}
-}
-
-stock send_message(const message[], const id, const i){
-	message_begin(MSG_ONE, gSayText, {0, 0, 0}, i)
-	write_byte(id);
-	write_string(message);
-	message_end();
-}
-
-stock is_has_slash(const Message[]){
-	if(Message[0] == '/')
-		return true;
-
-	return false;
 }
 
 public client_infochanged(id){
@@ -763,12 +508,10 @@ public Info(){
 	{
 		if(!is_user_bot(id) && is_user_connected(id) && is_user_alive(id))
 		{
-			static buffer[256], len; new name[33]; get_user_name(id,name,32);
-
+			static buffer[256], len; new name[33]; get_user_name(id, name, 32);
 			len = format(buffer, charsmax(buffer), "%L", LANG_PLAYER,"FULL_INFO", name, LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
 
-				if(UserData[id][gLevel] <= 19)
-				{
+				if(UserData[id][gLevel] <= 19){
 					len += format(buffer[len], charsmax(buffer) - len, "^n%L",LANG_PLAYER,"PL_XP",UserData[id][gExp],gLevels[UserData[id][gLevel]]);
 				}else{
 					len += format(buffer[len], charsmax(buffer) - len, "^n%L",LANG_PLAYER,"PL_MAX");
@@ -781,7 +524,7 @@ public Info(){
 			show_dhudmessage(id,"%L",LANG_PLAYER,"ANEW_INFO", UserData[id][g_Bonus]);
 		}
 	}
-	return PLUGIN_CONTINUE ;
+	return PLUGIN_CONTINUE;
 }
 
 // Anew Menu
@@ -894,7 +637,7 @@ if(round <= get_pcvar_num(ar_round_acc)){
 
 public func_anew_menu(id, menu, item)
 {
-	if( item == MENU_EXIT ){
+	if(item == MENU_EXIT){
 	menu_destroy( menu );
 	return PLUGIN_HANDLED;
 	}
@@ -903,8 +646,8 @@ public func_anew_menu(id, menu, item)
 	new access, callback;
 	 
 	menu_item_getinfo( menu, item, access, data,5, iName, 63, callback );
-	new key = str_to_num( data );
-	switch( key ){
+	new key = str_to_num(data);
+	switch(key){
 		case 1:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
 				give_item(id,"weapon_awp");
@@ -915,7 +658,7 @@ public func_anew_menu(id, menu, item)
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AWP + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price1]);
 			}
-			}
+		}
 		case 2:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
 				give_item(id,"weapon_ak47");
@@ -926,7 +669,7 @@ public func_anew_menu(id, menu, item)
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [AK-47 + ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price2]);
 			}
-			}
+		}
 		case 3:{
 			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
 				give_item(id,"weapon_m4a1");
@@ -937,21 +680,21 @@ public func_anew_menu(id, menu, item)
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [M4A1+ ÐÐ¾Ð¼Ð¿Ð»ÐµÐºÑ]");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price3]);
 			}
-			}
+		}
 		case 4:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
 				cs_set_user_money(id,cs_get_user_money(id) + get_pcvar_num(price_cvar[menu_str1]), 1);
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d$]", get_pcvar_num(price_cvar[menu_str1]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price4]);
 			}
-			}
+		}
 		case 5:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
 				set_user_health(id,get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]));
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [+%d HP]", get_pcvar_num(price_cvar[menu_str2]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price5]);
 			}
-			}
+		}
 		
 		case 6:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
@@ -960,28 +703,28 @@ public func_anew_menu(id, menu, item)
 				ColorChat(id,TEAM_COLOR,"ÐÑ Ð²Ð·ÑÐ»Ð¸  [%d ÐÐ¿ÑÑÐ° Army Ranks]", get_pcvar_num(price_cvar[menu_str3]));
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
 			}
-			}
+		}
 		
 		case 7:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
 				set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture,60);
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7]);
 			}
-			}
+		}
 		
 		case 8:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8])){
-			if(!user_has_weapon(id, CSW_HEGRENADE))
-				fm_give_item(id, "weapon_hegrenade");
-				players[id] |= (1<<MEGA_GRENADE);
-				ColorChat(id, TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
-			} else {
-				players[id] |= (1<<MEGA_GRENADE);
-				ColorChat(id,TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
-			}
-			}
+			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price8]) || !user_has_weapon(id, CSW_HEGRENADE)){
+                if(!user_has_weapon(id, CSW_HEGRENADE))
+                    fm_give_item(id, "weapon_hegrenade");
+                    players[id] |= (1<<MEGA_GRENADE);
+                    ColorChat(id, TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
+                    UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
+                } else {
+                    players[id] |= (1<<MEGA_GRENADE);
+                    ColorChat(id,TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA GRENADE");
+                    UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price8]);
+                }
+		}
 		
 		case 9:{
 			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price9])){
@@ -992,7 +735,7 @@ public func_anew_menu(id, menu, item)
 				ColorChat(id,TEAM_COLOR, "ÐÑ Ð²Ð·ÑÐ»Ð¸ MEGA DEAGLE");
 				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price9]);
 			}
-			}
+		}
 
 		}
 		return PLUGIN_HANDLED;
