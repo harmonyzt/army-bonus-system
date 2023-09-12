@@ -11,7 +11,7 @@
 #include < army_bonus_system >
 
 #pragma tabsize 0;
-#define ver "build-11.2-stable"
+#define ver "build-11.3-stable"
 
 new block = 0;      // For blocking poeple from opening anew menu
 new round;          // Count rounds for anew menu restrictions
@@ -126,7 +126,7 @@ public plugin_init()
 	register_event( "DeathMsg","EventDeath","a");
 	register_event("HLTV", "on_new_round", "a", "1=0", "2=0");
 	register_message(get_user_msgid("SayText"), "msg_SayText");
-	RegisterHam(Ham_TakeDamage,"player","TakeDamage");
+	RegisterHam(Ham_TakeDamage, "player", "TakeDamage");
 	set_task(1.0, "Info", _, _, _, "b");
 
 	MaxPlayers = get_maxplayers();

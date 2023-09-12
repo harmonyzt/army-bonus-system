@@ -132,8 +132,8 @@ PLAYER 		= Player
 NEW_LEVEL 	= got a new rank - 
 CONTR 		= Congratulations to the fighter!
 PRIFIX      = ABS
-NEW_LVL_HUD = Player %s got a new rank^n[%L]
-SPECTATING_INF      = Name: %s ^nRank: %L ^nEXP: [%d/%d] ^nBonuses: [%d]
+NEW_LVL_HUD = Player %s got a new rank!^n[%L]
+SPECTATING_INF  = Name: %s ^nRank: %L ^nEXP: [%d/%d] ^nBonuses: [%d]
 
 EMPTY_MSG	= The message cannot be empty.
 ENOUGH_ROUND = [ABS] This menu can only be opened after %d round(s).
@@ -144,8 +144,8 @@ TT_WIN = Terrorists Won!
 
 KNIFE_KILL = [ABS] Perfect! You are rewarded with %d bonuses
 
-SUCC_BOMB_DEF = [ABS] You recieved %d exp for defusing a bomb
-SUCC_BOMB_PLANT = [ABS] You recieved %d exp for planting a bomb
+SUCC_BOMB_DEF = [ABS] You recieved %d EXP for defusing a bomb
+SUCC_BOMB_PLANT = [ABS] You recieved %d EXP for planting a bomb
 
 STREAK = [ABS] For a streak of %d kills, you are rewarded with %d bonuses
 STREAK_HS = [ABS] For a streak of %d kills in head, you are rewarded with %d bonuses
@@ -168,9 +168,9 @@ MENU_NEXT           = Next
 MENU_PREV           = Back
 MENU_EXIT           = Exit
 
-BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are blocked!
+BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are disabled!
 ONLY_ALIVE = [ABS] Only for alive players!
 ANEW_INFO = You have %d bonuses^nType /anew
-NO_BOMB_PLANT = Not enough players for planting a bomb (Needed %d players)
+NO_BOMB_PLANT = Not enough players for planting a bomb (Need %d players)
 
-FIRST_BLOOD = %s got %d exp for the first blood!
+FIRST_BLOOD = %s got %d EXP for the first blood!
