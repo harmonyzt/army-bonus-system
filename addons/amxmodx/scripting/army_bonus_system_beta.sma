@@ -460,7 +460,9 @@ public Info(){
 	{
 		if(!is_user_bot(id) && is_user_connected(id) && is_user_alive(id))
 		{
-			static buffer[256], len; new name[33]; get_user_name(id, name, 32);
+			static buffer[256], len; new name[33];
+            get_user_name(id, name, 32);
+            
 			len = format(buffer, charsmax(buffer), "%L", LANG_PLAYER,"FULL_INFO", name, LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
 
 				if(UserData[id][gLevel] <= 19){
