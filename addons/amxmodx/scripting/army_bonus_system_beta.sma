@@ -5,9 +5,6 @@
 #include < nvault >
 #include < colorchat2 >
 #include < dhudmessage >
-#include < csx >
-#include < fakemeta_util >
-#include < hamsandwich >
 #include < army_bonus_system >
 
 #pragma tabsize 0;
@@ -126,7 +123,6 @@ public plugin_init()
 	register_event( "DeathMsg","EventDeath","a");
 	register_event("HLTV", "on_new_round", "a", "1=0", "2=0");
 	register_message(get_user_msgid("SayText"), "msg_SayText");
-	RegisterHam(Ham_TakeDamage, "player", "TakeDamage");
 	set_task(1.0, "Info", _, _, _, "b");
 
 	MaxPlayers = get_maxplayers();
@@ -192,6 +188,12 @@ public bomb_defused(defuser){
 		UserData[defuser][gExp] += get_pcvar_num(ar_def_exp);
 	}
 }
+
+public bomb_explode(id)
+{
+	UserData[0][gExp] += 1;
+}
+
 
 public plugin_end(){
 	nvault_close(g_vault);
@@ -283,14 +285,17 @@ public EventDeath(){
 			new name[33];
 			get_user_name(iKiller, name, 32);
 			UserData[iKiller][gExp] += get_pcvar_num(first_exp);
+            check_level(iKiller);
 			client_print(0, print_center, "%L", LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
 			first_blood = 0;
 			return PLUGIN_HANDLED;
 		}
 		
 		// Teamkill
-		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim))
-			UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
+		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim)){
+            UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
+            check_level(iKiller);
+        }
 
 		// Headshot
 		if(head){
