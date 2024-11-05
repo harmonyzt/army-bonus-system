@@ -16,7 +16,7 @@ new players_online;
 new players_need;
 new need_kills[33];
 new need_hs[33];
-new first_blood;
+new first_blood = 1;
 new gRestrictMaps, gFlash, gSmoke,gHe, gHpbylevel, gApbylevel, gTk, gLostXpTk, gLevelUpmsg
 new ar_bonus_knife, ar_bonus_newlvl, ar_kill_exp, ar_kill_head, ar_kill_knife,
 ar_round_acc, ar_bonus_on, ar_bonus_streak, ar_bonus_streak_head, ar_bombplant_exp, ar_def_exp;
@@ -161,7 +161,7 @@ public bomb_planting(planter){
 	if(players_online <= get_pcvar_num(players_need) && get_pcvar_num(bomb_mode) == 1){
 		client_print(planter, print_center, "%L", LANG_PLAYER, "NO_BOMB_PLANT", get_pcvar_num(players_need));
 
-		// Fix for planting status being played whe you're not planting a bomb
+		// Fix planting status being played when you're not planting a bomb anymore
 		engclient_cmd(planter,"weapon_knife");
 		message_begin(MSG_ONE, g_iMsgIdBarTime, _, planter);
 		write_short(0);
@@ -189,6 +189,7 @@ public bomb_defused(defuser){
 	}
 }
 
+// Refactor to make only XP gain for T side
 public bomb_explode(id)
 {
 	UserData[0][gExp] += 1;
@@ -213,14 +214,29 @@ public client_disconnect(id){
 	players_online--;
 	UserData[id][Streak] = 0;
 	UserData[id][HeadStr] = 0;
-	// This was a possible fix for data being erased. Unused
+	// This was a possible fix for data being erased
 	// UserData[id] = UserData[0];
 	save_usr(id);
 }
 
-public on_new_round(id){
+public on_new_round(){
 	round++
 	first_blood = 1
+
+    if(first_blood == 1){
+        set_task(0.3, "bot_buy_anew", _, _, _, "b");
+    }
+}
+
+public bot_buy_anew(){
+    new probability = 40;
+
+    for(new id = 1; id <= MaxPlayers; id++){
+        if(is_user_bot(id) && is_user_alive(id) && probability > random_num(1,100) && UserData[id][g_Bonus] > 15){
+            anew_get_menuitem(id, random_num(5,7))
+        }
+    }
+
 }
 
 public check_level(id){
@@ -487,181 +503,204 @@ public Info(){
 }
 
 // Anew Menu
-public anew_menu(id){
+public anew_menu(id) {
+    if (get_pcvar_num(ar_bonus_on) == 0) {
+        ColorChat(id, RED, "%L", LANG_PLAYER, "BONUS_OFF");
+        return PLUGIN_HANDLED;
+    }
 
-if(get_pcvar_num(ar_bonus_on) == 0){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"BONUS_OFF");
-	return PLUGIN_HANDLED;
-}
+    if (restr_blocked == true) {
+        ColorChat(id, RED, "%L", LANG_PLAYER, "BONUS_BLOCKED_MAP");
+        return PLUGIN_HANDLED;
+    }
 
-if(restr_blocked == true){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"BONUS_BLOCKED_MAP");
-	return PLUGIN_HANDLED;
-}
+    if (!is_user_alive(id)) {
+        ColorChat(id, RED, "%L", LANG_PLAYER, "ONLY_ALIVE");
+        return PLUGIN_HANDLED;
+    }
 
-if(!is_user_alive(id)){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"ONLY_ALIVE");
-	return PLUGIN_HANDLED;
-}
-	
-if(round <= get_pcvar_num(ar_round_acc)){
-	ColorChat(id,RED,"%L",LANG_PLAYER,"NOT_ENOUGH_ROUNDS",get_pcvar_num(ar_round_acc));
-	return PLUGIN_HANDLED;
-}
+    if (round <= get_pcvar_num(ar_round_acc)) {
+        ColorChat(id, RED, "%L", LANG_PLAYER, "NOT_ENOUGH_ROUNDS", get_pcvar_num(ar_round_acc));
+        return PLUGIN_HANDLED;
+    }
 
-	static s_menu_it[700];
-	new Text[1024];
-	format(s_menu_it, charsmax(s_menu_it), "%L", LANG_PLAYER, "MENU_TITLE", UserData[id][g_Bonus]);
-	new menu = menu_create(s_menu_it, "func_anew_menu");
+    static s_menu_it[700];
+    new Text[1024];
+    format(s_menu_it, charsmax(s_menu_it), "%L", LANG_PLAYER, "MENU_TITLE", UserData[id][g_Bonus]);
+    new menu = menu_create(s_menu_it, "func_anew_menu");
 
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE", get_pcvar_num(price_cvar[price1]));
-		menu_additem(menu, Text,"1");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text,"1");
-	}
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_ONE", get_pcvar_num(price_cvar[price1]));
+        menu_additem(menu, Text, "1");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "1");
+    }
 
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO", get_pcvar_num(price_cvar[price2]));
-		menu_additem(menu, Text,"2");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text,"2");
-	}
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_TWO", get_pcvar_num(price_cvar[price2]));
+        menu_additem(menu, Text, "2");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "2");
+    }
 
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE", get_pcvar_num(price_cvar[price3]));
-		menu_additem(menu, Text, "3");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "3");
-	}
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_THREE", get_pcvar_num(price_cvar[price3]));
+        menu_additem(menu, Text, "3");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "3");
+    }
 
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR", get_pcvar_num(price_cvar[menu_str1]), get_pcvar_num(price_cvar[price4]));
-		menu_additem(menu, Text, "4");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "4");
-	}
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FOUR", get_pcvar_num(price_cvar[menu_str1]), get_pcvar_num(price_cvar[price4]));
+        menu_additem(menu, Text, "4");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "4");
+    }
 
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE", get_pcvar_num(price_cvar[menu_str2]), get_pcvar_num(price_cvar[5]));
-		menu_additem(menu, Text, "5");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "5");
-	}
-		
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX", get_pcvar_num(price_cvar[menu_str3]), get_pcvar_num(price_cvar[price6]));
-		menu_additem(menu, Text, "6");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "6");
-	}
-		
-	if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN", get_pcvar_num(price_cvar[price7]));
-		menu_additem(menu, Text, "7");
-	}else{
-		formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
-		menu_additem(menu, Text, "7");
-	}
-	
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_FIVE", get_pcvar_num(price_cvar[menu_str2]), get_pcvar_num(price_cvar[price5]));
+        menu_additem(menu, Text, "5");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "5");
+    }
+
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SIX", get_pcvar_num(price_cvar[menu_str3]), get_pcvar_num(price_cvar[price6]));
+        menu_additem(menu, Text, "6");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "6");
+    }
+
+    if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])) {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_SEVEN", get_pcvar_num(price_cvar[price7]));
+        menu_additem(menu, Text, "7");
+    } else {
+        formatex(Text, charsmax(Text), "%L", id, "MENU_HANDLE_OFF");
+        menu_additem(menu, Text, "7");
+    }
+
     menu_setprop(menu, MPROP_BACKNAME, "%L", LANG_PLAYER, "MENU_PREV");
-	menu_setprop(menu, MPROP_NEXTNAME, "%L", LANG_PLAYER, "MENU_NEXT");
-	menu_setprop(menu, MPROP_EXITNAME, "%L", LANG_PLAYER, "MENU_EXIT");
-	menu_display(id, menu, 0);
+    menu_setprop(menu, MPROP_NEXTNAME, "%L", LANG_PLAYER, "MENU_NEXT");
+    menu_setprop(menu, MPROP_EXITNAME, "%L", LANG_PLAYER, "MENU_EXIT");
+    menu_display(id, menu, 0);
 
-	return PLUGIN_HANDLED;
+    return PLUGIN_HANDLED;
 }
 
-public func_anew_menu(id, menu, item)
-{
-	if(item == MENU_EXIT){
-	    menu_destroy(menu);
-	    return PLUGIN_HANDLED;
-	}
+public func_anew_menu(id, menu, item) {
+    if (item == MENU_EXIT) {
+        menu_destroy(menu);
+        return PLUGIN_HANDLED;
+    }
 
-	new data[6], iName[64];
-	new access, callback;
-	 
-	menu_item_getinfo(menu, item, access, data,5, iName, 63, callback);
-	new key = str_to_num(data);
+    new data[6], iName[64];
+    new access, callback;
+
+    menu_item_getinfo(menu, item, access, data, 5, iName, 63, callback);
+    new key = str_to_num(data);
     new username[32];
     get_user_name(id, username, 31);
 
-	switch(key){
-		case 1:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])){
-				give_item(id, "weapon_awp");
-				give_item(id, "weapon_hegrenade");
-				give_item(id, "weapon_flashbang");
-				cs_set_user_bpammo( id, CSW_AWP, 40);
-				set_user_armor(id, 100);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET1");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price1]);
-			}
-		}
-		case 2:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])){
-				give_item(id, "weapon_ak47");
-				give_item(id, "weapon_hegrenade");
-				give_item(id, "weapon_flashbang");
-				give_item(id, "weapon_flashbang");
-				cs_set_user_bpammo(id, CSW_AK47, 200);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET2");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price2]);
-			}
-		}
-		case 3:{
-			if(UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])){
-				give_item(id, "weapon_m4a1");
-				give_item(id, "weapon_hegrenade");
-				give_item(id, "weapon_flashbang");
-				give_item(id, "weapon_flashbang");
-				cs_set_user_bpammo(id, CSW_M4A1, 200);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET3");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price3]);
-			}
-		}
-		case 4:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])){
-				cs_set_user_money(id, cs_get_user_money(id) + get_pcvar_num(price_cvar[menu_str1]), 1);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET4", get_pcvar_num(price_cvar[menu_str1]));
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price4]);
-			}
-		}
-		case 5:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])){
-				set_user_health(id, get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]));
-				ColorChat(id,TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET5", get_pcvar_num(price_cvar[menu_str2]));
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price5]);
-			}
-		}
-		
-		case 6:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])){
-				UserData[id][gExp] += get_pcvar_num(price_cvar[menu_str3]);
-				check_level(id);
-				ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET6", get_pcvar_num(price_cvar[menu_str3]));
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
-			}
-		}
-		
-		case 7:{
-			if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])){
-				set_user_rendering(id,kRenderFxNone,0,0,0, kRenderTransTexture, 60);
-                ColorChat(id, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET7");
-				UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7]);
-			}
-		}
+    switch (key) {
+        case 1: {
+            anew_get_menuitem(id, 1)
+        }
+        case 2: {
+            anew_get_menuitem(id, 2)
+        }
+        case 3: {
+            anew_get_menuitem(id, 3)
+        }
+        case 4: {
+            anew_get_menuitem(id, 4)
+        }
+        case 5: {
+            anew_get_menuitem(id, 5)
+        }
+        case 6: {
+            anew_get_menuitem(id, 6)
+        }
+        case 7: {
+            anew_get_menuitem(id, 7)
+        }
+    }
 
-		}
-		return PLUGIN_HANDLED;
+    return PLUGIN_HANDLED;
 }
+
+public anew_get_menuitem(id, slotnum){
+    new name[32]; get_user_name(id, name, 31)
+    switch(slotnum){
+        case 1: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price1])) {
+                give_item(id, "weapon_awp");
+                give_item(id, "weapon_hegrenade");
+                give_item(id, "weapon_flashbang");
+                set_user_armor(id, 100);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET1", name[id]);
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price1]);
+            }
+        }
+        case 2: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price2])) {
+                give_item(id, "weapon_ak47");
+                give_item(id, "weapon_hegrenade");
+                give_item(id, "weapon_flashbang");
+                give_item(id, "weapon_flashbang");
+                set_user_armor(id, 100);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET2", name[id]);
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price2]);
+            }
+        }
+        case 3: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price3])) {
+                give_item(id, "weapon_m4a1");
+                give_item(id, "weapon_hegrenade");
+                give_item(id, "weapon_flashbang");
+                give_item(id, "weapon_flashbang");
+                set_user_armor(id, 100);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET3", name[id]);
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price3]);
+            }
+        }
+        case 4: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price4])) {
+                cs_set_user_money(id, cs_get_user_money(id) + get_pcvar_num(price_cvar[menu_str1]), 1);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET4", name[id], get_pcvar_num(price_cvar[menu_str1]));
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price4]);
+            }
+        }
+        case 5: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price5])) {
+                set_user_health(id, get_user_health(id) + get_pcvar_num(price_cvar[menu_str2]));
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET5", name[id], get_pcvar_num(price_cvar[menu_str2]));
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price5]);
+            }
+        }
+        case 6: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price6])) {
+                UserData[id][gExp] += get_pcvar_num(price_cvar[menu_str3]);
+                check_level(id);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET6", name[id], get_pcvar_num(price_cvar[menu_str3]));
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price6]);
+            }
+        }
+        case 7: {
+            if (UserData[id][g_Bonus] >= get_pcvar_num(price_cvar[price7])) {
+                set_user_rendering(id, kRenderFxNone, 0, 0, 0, kRenderTransTexture, 60);
+                ColorChat(0, TEAM_COLOR, "%L", LANG_PLAYER, "ANEW_MENU_GET7", name[id]);
+                UserData[id][g_Bonus] -= get_pcvar_num(price_cvar[price7]);
+            }
+        }
+    }
+}
+
 
 public plugin_precache(){
 	precache_sound("abs/lvl_up.wav");
