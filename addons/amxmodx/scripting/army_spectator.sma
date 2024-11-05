@@ -4,7 +4,7 @@
 #include < fakemeta >
 #include < army_bonus_system >
 
-#define PLUGIN "ABS Spectators"
+#define PLUGIN "ABS Spectator Info Addon"
 #define VERSION "2.7-stable"
 #define AUTHOR "harmony"
 
