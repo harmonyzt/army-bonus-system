@@ -81,8 +81,6 @@ ANEW_MENU_GET4       = Вы взяли [$%d]
 ANEW_MENU_GET5       = Вы взяли [%d Жизней]
 ANEW_MENU_GET6       = Вы взяли [%d Опыта Army Bonus System]
 ANEW_MENU_GET7       = Вы взяли [Невидимость 60%]
-ANEW_MENU_GET8       = Вы взяли [Мега Гранату]
-ANEW_MENU_GET9       = Вы взяли [Мега Deagle]
 
 BLOCKED_MAP_BONUS   = [ABS] Бонусы на этой карте заблокированы!
 BONUS_OFF           = [ABS] Бонусы запрещены сервером.
@@ -136,8 +134,8 @@ NEW_LVL_HUD = Player %s got a new rank!^n[%L]
 SPECTATING_INF  = Name: %s ^nRank: %L ^nEXP: [%d/%d] ^nBonuses: [%d]
 
 EMPTY_MSG	= The message cannot be empty.
-ENOUGH_ROUND = [ABS] This menu can only be opened after %d round(s).
-ENOUGH_PLAYERS = [ABS] Not enough players to get EXP (Need %d players)
+NOT_ENOUGH_ROUNDS = [ABS] This menu can only be opened after %d round(s).
+NOT_ENOUGH_PLAYERS = [ABS] Not enough players to get EXP (Need %d players)
 
 CT_WIN = Counter-Terrorists Won!
 TT_WIN = Terrorists Won!
@@ -161,12 +159,18 @@ MENU_HANDLE_FOUR    = Take \r%d$\w                      [%d]
 MENU_HANDLE_FIVE    = Take \r%d\w HP                    [%d]
 MENU_HANDLE_SIX     = Take \r%d\w EXP \yABS\w           [%d]
 MENU_HANDLE_SEVEN   = Take \rInvisibility 50%\w         [%d]
-MENU_HANDLE_EIGHT   = Take \rMEGA GRENADE\w             [%d]
-MENU_HANDLE_NINE    = Take \rMEGA DEAGLE\w              [%d]
 MENU_HANDLE_OFF     = \dNot enough Bonuses
 MENU_NEXT           = Next
 MENU_PREV           = Back
 MENU_EXIT           = Exit
+
+ANEW_MENU_GET1       = %s took [AWP + Nades]
+ANEW_MENU_GET2       = %s took [AK-47 + Nades]
+ANEW_MENU_GET3       = %s took [M4A1 + Nades]
+ANEW_MENU_GET4       = %s took [$%d]
+ANEW_MENU_GET5       = %s took [%d HP]
+ANEW_MENU_GET6       = %s took [%d EXP Army Bonus System]
+ANEW_MENU_GET7       = %s took [Invisibility 50%]
 
 BLOCKED_MAP_BONUS = [ABS] Bonuses on this map are disabled!
 ONLY_ALIVE = [ABS] Only for alive players!
