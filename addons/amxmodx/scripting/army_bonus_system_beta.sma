@@ -10,7 +10,7 @@
 #pragma tabsize 0;
 #define ver "build-11.3-stable"
 
-new block = 0;      // For blocking poeple from opening anew menu
+new block = 0;      // For blocking people from opening anew menu
 new round;          // Count rounds for anew menu restrictions
 new players_online;
 new players_need;
@@ -122,7 +122,6 @@ public plugin_init()
 	register_logevent( "EventRoundStart", 2, "1=Round_Start" );
 	register_event( "DeathMsg","EventDeath","a");
 	register_event("HLTV", "on_new_round", "a", "1=0", "2=0");
-	register_message(get_user_msgid("SayText"), "msg_SayText");
 	set_task(1.0, "Info", _, _, _, "b");
 
 	MaxPlayers = get_maxplayers();
@@ -146,7 +145,6 @@ public plugin_init()
         }
     }
 }
-
 
 public plugin_cfg(){
 	new szCfgDir[64], szFile[192];
@@ -189,33 +187,38 @@ public bomb_defused(defuser){
 	}
 }
 
-// Refactor to make only XP gain for T side
-public bomb_explode(id)
-{
-	UserData[0][gExp] += 1;
+public bomb_explode() {
+    if (players_online <= get_pcvar_num(players_need)) {
+        return;
+    }
+    
+    static players[32], num, i, player;
+    get_players(players, num, "he", "TERRORIST");
+    
+    for (i = 0; i < num; i++) {
+        player = players[i];
+        UserData[player][gExp] += get_pcvar_num(ar_bombplant_exp);
+        check_level(player);
+    }
 }
-
 
 public plugin_end(){
 	nvault_close(g_vault);
 }
 
-public client_putinserver(id){
-	players_online++
-	UserData[id] = UserData[0];
-	UserData[id][Streak] = 0;
-	UserData[id][HeadStr] = 0;
-	load_data(id);
-	need_kills[id] = 5;
-	need_hs[id] = 4;
+public client_putinserver(id) {
+    players_online++;
+    UserData[id][Streak] = 0;
+    UserData[id][HeadStr] = 0;
+    load_data(id);
+    need_kills[id] = 5;
+    need_hs[id] = 4;
 }
 
 public client_disconnect(id){
 	players_online--;
 	UserData[id][Streak] = 0;
 	UserData[id][HeadStr] = 0;
-	// This was a possible fix for data being erased
-	// UserData[id] = UserData[0];
 	save_usr(id);
 }
 
@@ -224,7 +227,7 @@ public on_new_round(){
 	first_blood = 1
 
     if(first_blood == 1){
-        set_task(0.3, "bot_buy_anew", _, _, _, "b");
+        set_task(random_float(1.0, 8.0), "bot_buy_anew", _, _, _, "b");
     }
 }
 
@@ -284,80 +287,92 @@ public check_level(id){
 }
 
 public EventDeath(){
-	static iKiller, iVictim, head, wpn[32];
-	iKiller = read_data(1);
+    static iKiller, iVictim, head, wpn[32];
+    iKiller = read_data(1);
+    iVictim = read_data(2);
+    head = read_data(3);
+    read_data(4, wpn, 31);
 
-	if(!is_user_connected(iKiller))	// [Player out of range (0)]
-		return PLUGIN_HANDLED
+    if (!is_user_connected(iKiller) || !is_user_connected(iVictim)) {
+        return PLUGIN_HANDLED;
+    }
+
+    if (iKiller == iVictim || UserData[iKiller][gLevel] > 29) {
+        return PLUGIN_CONTINUE;
+    }
 	
-	iVictim = read_data(2);
-	head = read_data(3);
-	read_data(4, wpn, 31);
+    // First Blood
+    if (first_blood == 1 && get_pcvar_num(first_exp) != 0) {
+        static name[33];
+        get_user_name(iKiller, name, 32);
+        UserData[iKiller][gExp] += get_pcvar_num(first_exp);
+        check_level(iKiller);
+        client_print(0, print_center, "%L", LANG_PLAYER, "FIRST_BLOOD", name, get_pcvar_num(first_exp));
+        first_blood = 0;
+        
+        save_usr(iKiller);
+        return PLUGIN_HANDLED;
+    }
 	
-	if(iKiller != iVictim && is_user_connected(iKiller) && is_user_connected(iVictim) && UserData[iKiller][gLevel] <= 29)	
-	{
-		// First Blood
-		if(first_blood == 1 && get_pcvar_num(first_exp) != 0){
-			new name[33];
-			get_user_name(iKiller, name, 32);
-			UserData[iKiller][gExp] += get_pcvar_num(first_exp);
-            check_level(iKiller);
-			client_print(0, print_center, "%L", LANG_PLAYER,"FIRST_BLOOD", name, get_pcvar_num(first_exp));
-			first_blood = 0;
-			return PLUGIN_HANDLED;
-		}
-		
-		// Teamkill
-		if(get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim)){
-            UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
-            check_level(iKiller);
-        }
+    // Team Kill
+    if (get_pcvar_num(gTk) && get_user_team(iKiller) == get_user_team(iVictim)) {
+        UserData[iKiller][gExp] -= get_pcvar_num(gLostXpTk);
+        check_level(iKiller);
 
-		// Headshot
-		if(head){
-			UserData[iKiller][HeadStr]++
-			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_head);
-		}
-
-		// Remove invisibility if player has it
-		set_user_rendering(iVictim,kRenderFxNone, 255, 255, 255, kRenderNormal, 16);
-
-		UserData[iKiller][Streak]++
-		UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
-
-		// Remove from victim any streaks and perks
-		UserData[iVictim][Streak] = 0;
-		UserData[iVictim][HeadStr] = 0;
-		need_kills[iVictim] = 5;
-		need_hs[iVictim] = 3;
-	
-		// KILLSTERAK
-		if(UserData[iKiller][Streak] >= need_kills[iKiller]){
-			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak);
-			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "STREAK", need_kills[iKiller], get_pcvar_num(ar_bonus_streak));
-			need_kills[iKiller] += 5;
-		}
-		
-		// HEADSTREAK
-		if(UserData[iKiller][HeadStr] >= need_hs[iKiller]){
-			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak_head);
-			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER,"STREAK_HS", need_hs[iKiller], get_pcvar_num(ar_bonus_streak_head));
-			need_hs[iKiller] += 4;
-		}
-		
-		// KNIFE KILL
-		if(contain(wpn, "knife") != -1){
-			UserData[iKiller][gExp] += get_pcvar_num(ar_kill_knife);
-			UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
-			ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "KNIFE_KILL", get_pcvar_num(ar_bonus_knife));
-		}
-
-		check_level(iKiller);
+        UserData[iKiller][Streak] = 0;
+        UserData[iKiller][HeadStr] = 0;
 
         save_usr(iKiller);
         save_usr(iVictim);
-	}
-	return PLUGIN_CONTINUE;
+        return PLUGIN_HANDLED;
+    }
+
+    // Main Reward for killing
+    UserData[iKiller][Streak]++;
+    UserData[iKiller][gExp] += get_pcvar_num(ar_kill_exp);
+
+    // Headshot bonus
+    if (head) {
+        UserData[iKiller][HeadStr]++;
+        UserData[iKiller][gExp] += get_pcvar_num(ar_kill_head);
+    }
+
+    // Knife kill bonus
+    if (contain(wpn, "knife") != -1) {
+        UserData[iKiller][gExp] += get_pcvar_num(ar_kill_knife);
+        UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_knife);
+        ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "KNIFE_KILL", get_pcvar_num(ar_bonus_knife));
+    }
+
+    // Killstreak bonus
+    if (UserData[iKiller][Streak] >= need_kills[iKiller]) {
+        UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak);
+        ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "STREAK", need_kills[iKiller], get_pcvar_num(ar_bonus_streak));
+        need_kills[iKiller] += 5;
+    }
+		
+    // Headshot streak bonus
+    if (UserData[iKiller][HeadStr] >= need_hs[iKiller]) {
+        UserData[iKiller][g_Bonus] += get_pcvar_num(ar_bonus_streak_head);
+        ColorChat(iKiller, GREEN, "%L", LANG_PLAYER, "STREAK_HS", need_hs[iKiller], get_pcvar_num(ar_bonus_streak_head));
+        need_hs[iKiller] += 4;
+    }
+		
+    // Remove any effects
+    UserData[iVictim][Streak] = 0;
+    UserData[iVictim][HeadStr] = 0;
+    need_kills[iVictim] = 5;
+    need_hs[iVictim] = 3;
+    
+    // Remove invisibility from victim if died
+    set_user_rendering(iVictim, kRenderFxNone, 255, 255, 255, kRenderNormal, 16);
+
+    // Check level and done
+    check_level(iKiller);
+    save_usr(iKiller);
+    save_usr(iVictim);
+
+    return PLUGIN_CONTINUE;
 }
 
 public EventRoundStart(){
@@ -394,57 +409,83 @@ public EventRoundStart(){
 ///		Nvault Handling
 ///
 
-public load_data(id){
-	new szName[33];
-	
-    get_user_name(id,szName,32);
+public load_data(id) {
+    // Dont load bad ids
+    if (!is_user_connected(id)) {
+        register_player(id);
+        return;
+    }
+    
+    static szName[32], data[256], timestamp;
+    get_user_name(id, szName, charsmax(szName));
 
-	static data[256], timestamp;
-		if(nvault_lookup(g_vault, szName, data, sizeof(data) - 1, timestamp) ){
-			next_load_data(id, data, sizeof(data) - 1);
-			return;
-		} else {
-			register_player(id,"");
-	}
+    if (nvault_lookup(g_vault, szName, data, charsmax(data), timestamp)) {
+        next_load_data(id, data);
+    } else {
+        register_player(id);
+    }
 }
 
-public next_load_data(id,data[],len){
-	new szName[33];
-    new exp[10], level[10], bonus[10], rank[10];
+public next_load_data(id, const data[]) {
+    static exp[10], level[10], bonus[10];
+    
+    new temp_data[256];
+    copy(temp_data, charsmax(temp_data), data);
+    
+    // Parse
+    replace_all(temp_data, charsmax(temp_data), "|", " ");
+    parse(temp_data, exp, charsmax(exp), level, charsmax(level), bonus, charsmax(bonus));
 
-	get_user_name(id,szName,32);
-	replace_all(data,len,"|"," ");
-	parse(data, exp, 9, level, 9, bonus, 9, rank, 9);
+    UserData[id][gExp] = str_to_num(exp);
+    UserData[id][gLevel] = max(1, str_to_num(level)); // Not less than 1
+    UserData[id][g_Bonus] = max(0, str_to_num(bonus)); // Not less than 0
 
-	UserData[id][gExp]= str_to_num(exp);
-	UserData[id][gLevel]= str_to_num(level);
-	UserData[id][g_Bonus]= str_to_num(bonus);
-		
-	if(UserData[id][gLevel] <= 0)
-		UserData[id][gLevel] = 1;
-
-	while(UserData[id][gExp] >= gLevels[UserData[id][gLevel]]) 
-		UserData[id][gLevel]++;
+    // Correct level
+    while (UserData[id][gLevel] < sizeof(gLevels) && UserData[id][gExp] >= gLevels[UserData[id][gLevel]]) {
+        UserData[id][gLevel]++;
+    }
+    
+    // Array escape evasion
+    if (UserData[id][gLevel] >= sizeof(gLevels)) {
+        UserData[id][gLevel] = sizeof(gLevels) - 1;
+    }
 }
 
-public register_player(id,data[]){
-	new szName[33];
-	get_user_name(id, szName, 32);
-	
-	UserData[id][gExp] = 0
-	UserData[id][gLevel] = 1;
-	UserData[id][g_Bonus] = 0
-	UserData[id][Streak] = 0	
-	UserData[id][HeadStr] = 0
+public register_player(id) {
+    arrayset(UserData[id], 0, PlData);
+
+    UserData[id][gLevel] = 1;
+    need_kills[id] = 5;
+    need_hs[id] = 3;
+    
+    save_usr(id);
 }
 
-public save_usr(id){
-	new szName[33];
-	get_user_name(id, szName, 32);
+public save_usr(id) {
+    if (!is_user_connected(id)) {
+        return;
+    }
+    
+    static szName[32], data[64];
+    get_user_name(id, szName, charsmax(szName));
+    
+    formatex(data, charsmax(data), "%d|%d|%d", 
+        UserData[id][gExp], 
+        UserData[id][gLevel], 
+        UserData[id][g_Bonus]);
+    
+    nvault_set(g_vault, szName, data);
+}
 
-	static data[256];
-	formatex(data, 255, "|%i|%i|%i|", UserData[id][gExp], UserData[id][gLevel], UserData[id][g_Bonus]);
-	nvault_set(g_vault, szName, data);
+public save_all_players() {
+    static players[32], num, i;
+    get_players(players, num, "h");
+    
+    for (i = 0; i < num; i++) {
+        save_usr(players[i]);
+    }
+    
+    server_print("[ABS] Данные всех игроков сохранены.");
 }
 
 public client_infochanged(id){
@@ -467,38 +508,35 @@ public client_infochanged(id){
 	return PLUGIN_CONTINUE;
 }
 
-public msg_SayText(){
-	new arg[32];
-	get_msg_arg_string(2, arg, 31);
-	if(containi(arg,"name") != -1)
-		return PLUGIN_HANDLED
-
-	return PLUGIN_CONTINUE;
-}
-
 public Info(){
-	for(new id = 1; id <= MaxPlayers; id++)
+    static players[32], num;
+    get_players(players, num, "ch");
+
+	for (new i = 0; i < num; i++) 
 	{
-		if(!is_user_bot(id) && is_user_connected(id) && is_user_alive(id))
-		{
-			static buffer[256], len; new name[33];
-            get_user_name(id, name, 32);
+		static buffer[256], len; new name[33];
+        new id = players[i];
+
+        if(!is_user_alive(id) || is_user_bot(id))
+            return PLUGIN_CONTINUE;
+
+        get_user_name(id, name, 32);
             
-			len = format(buffer, charsmax(buffer), "%L", LANG_PLAYER,"FULL_INFO", name, LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
+		len = format(buffer, charsmax(buffer), "%L", LANG_PLAYER, "FULL_INFO", name, LANG_PLAYER, gRankNames[UserData[id][gLevel]]);
 
-				if(UserData[id][gLevel] <= 19){
-					len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_XP", UserData[id][gExp],gLevels[UserData[id][gLevel]]);
-				}else{
-					len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_MAX");
-				}
+		if(UserData[id][gLevel] <= 19){
+			len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_XP", UserData[id][gExp],gLevels[UserData[id][gLevel]]);
+			    }else{
+			len += format(buffer[len], charsmax(buffer) - len, "^n%L", LANG_PLAYER, "PL_MAX");
+			}
 
-			set_dhudmessage(100, 100, 100, 0.01, 0.16, 0, 1.0, 1.0, _, _, _);
-			show_dhudmessage(id, "%s", buffer);
+		set_dhudmessage(100, 100, 100, 0.01, 0.16, 0, 1.0, 1.0, _, _, _);
+		show_dhudmessage(id, "%s", buffer);
 
-			set_dhudmessage(100, 100, 100,-1.0,0.90, 0, 1.0, 1.0);
-			show_dhudmessage(id, "%L", LANG_PLAYER, "ANEW_INFO", UserData[id][g_Bonus]);
-		}
+		set_dhudmessage(100, 100, 100,-1.0,0.90, 0, 1.0, 1.0);
+		show_dhudmessage(id, "%L", LANG_PLAYER, "ANEW_INFO", UserData[id][g_Bonus]);
 	}
+
 	return PLUGIN_CONTINUE;
 }
 
@@ -712,7 +750,7 @@ public plugin_natives(){
 	register_native("get_user_rankname", "native_get_user_rankname", 1);
 	register_native("get_user_bonus", "native_get_user_bonus", 1);
 	register_native("get_user_expto", "native_get_user_expto", 1);		// Returns the amount of exp left until new rank
-	register_native("get_map_block","map_block",1);
+	register_native("get_map_block", "map_block",1);
     register_native("set_user_exp", "native_set_user_exp", 1);
 	register_native("set_user_lvl", "native_set_user_lvl", 1);
     register_native("set_user_bonus", "native_set_user_bonus", 1);
@@ -722,15 +760,15 @@ public map_block(id){
 	return block;
 }
 
-public native_set_user_bonus(id,num){
+public native_set_user_bonus(id, num){
 	UserData[id][g_Bonus] = num;
 }
 
-public native_set_user_exp(id,num){
+public native_set_user_exp(id, num){
 	UserData[id][gExp] = num;
 }
 
-public native_set_user_lvl(id,num){
+public native_set_user_lvl(id, num){
 	UserData[id][gLevel] = num;
 }
 
